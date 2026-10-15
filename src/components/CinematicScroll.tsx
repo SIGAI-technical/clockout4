@@ -18,7 +18,7 @@ if (typeof window !== "undefined") {
 
 // ─── Durations ────────────────────────────────────────────────────────────────
 const V1_DUR    = 6.966;
-const V2_DUR    = 6.166;
+const V2_DUR    = 6.08;
 const V3_DUR    = 9.333;
 const AUDIO_DUR = 31.03; // Full Avengers theme duration
 
@@ -586,7 +586,7 @@ const CinematicScroll = forwardRef<CinematicScrollHandle, CinematicScrollProps>(
           <div ref={v2LayerRef} className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0 }}>
             <video
               ref={v2Ref}
-              src="/videos/v2_hd.mp4"
+              src="/videos/2.mp4?v=2"
               muted
               playsInline
               preload="auto"

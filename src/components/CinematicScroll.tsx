@@ -518,12 +518,12 @@ const CinematicScroll = forwardRef<CinematicScrollHandle, CinematicScrollProps>(
       >
         <div ref={stageRef} id="cinematic-stage" className="sticky top-0 w-full overflow-hidden select-none bg-black" style={{ height: "100svh" }}>
 
-          {/* Film grain */}
-          <div className="absolute inset-0 pointer-events-none opacity-30 mix-blend-overlay" style={{ zIndex: 15, backgroundImage: "radial-gradient(rgba(61,220,132,.12) 1px,transparent 1px)", backgroundSize: "3px 3px" }} />
+          {/* Film grain (subtle cinematic texture that doesn't obscure sharpness) */}
+          <div className="absolute inset-0 pointer-events-none opacity-10 mix-blend-overlay" style={{ zIndex: 15, backgroundImage: "radial-gradient(rgba(61,220,132,.12) 1px,transparent 1px)", backgroundSize: "3px 3px" }} />
 
           {/* V1 */}
           <div ref={v1LayerRef} className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 1 }}>
-            <video ref={v1Ref} src="/videos/v1_hd.mp4" muted playsInline preload="auto" onEnded={e => e.currentTarget.pause()} className="w-full h-full object-cover" style={{ filter: "contrast(1.08) brightness(.92) saturate(1.15)" }} />
+            <video ref={v1Ref} src="/videos/v1_hd.mp4" muted playsInline preload="auto" onEnded={e => e.currentTarget.pause()} className="w-full h-full object-cover" style={{ filter: "contrast(1.05) brightness(1.0) saturate(1.08)", transform: "translateZ(0)" }} />
           </div>
 
           {/* T1 */}
@@ -534,7 +534,7 @@ const CinematicScroll = forwardRef<CinematicScrollHandle, CinematicScrollProps>(
 
           {/* V2 */}
           <div ref={v2LayerRef} className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0 }}>
-            <video ref={v2Ref} src="/videos/v2_hd.mp4" muted playsInline preload="auto" onEnded={e => e.currentTarget.pause()} className="w-full h-full object-cover" style={{ filter: "contrast(1.08) brightness(.92) saturate(1.15)" }} />
+            <video ref={v2Ref} src="/videos/v2_hd.mp4" muted playsInline preload="auto" onEnded={e => e.currentTarget.pause()} className="w-full h-full object-cover" style={{ filter: "contrast(1.05) brightness(1.0) saturate(1.08)", transform: "translateZ(0)" }} />
           </div>
 
           {/* T2 */}
@@ -545,7 +545,7 @@ const CinematicScroll = forwardRef<CinematicScrollHandle, CinematicScrollProps>(
 
           {/* V3 */}
           <div ref={v3LayerRef} className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0 }}>
-            <video ref={v3Ref} src="/videos/v3_hd.mp4" muted playsInline preload="auto" onEnded={e => e.currentTarget.pause()} className="w-full h-full object-cover" style={{ filter: "contrast(1.08) brightness(.92) saturate(1.15)" }} />
+            <video ref={v3Ref} src="/videos/v3_hd.mp4" muted playsInline preload="auto" onEnded={e => e.currentTarget.pause()} className="w-full h-full object-cover" style={{ filter: "contrast(1.05) brightness(1.0) saturate(1.08)", transform: "translateZ(0)" }} />
           </div>
 
           {/* Audio */}
@@ -554,7 +554,7 @@ const CinematicScroll = forwardRef<CinematicScrollHandle, CinematicScrollProps>(
           {/* Freeze frame */}
           <div ref={freezeLayerRef} className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0 }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/v3_freeze_frame.jpg" alt="Doom on the Throne" className="w-full h-full object-cover" style={{ filter: "contrast(1.08) brightness(.92) saturate(1.15)" }} />
+            <img src="/images/v3_freeze_frame.jpg" alt="Doom on the Throne" className="w-full h-full object-cover" style={{ filter: "contrast(1.05) brightness(1.0) saturate(1.08)", transform: "translateZ(0)" }} />
           </div>
 
           {/* Vignette */}

@@ -55,24 +55,68 @@ function Ember({ x, delay, dur, size, gold }: { x: number; delay: number; dur: n
 function Subtitles({ t }: { t: number | null }) {
   if (t === null || t >= T_DOOM_END) return null;
   return (
-    <div className="absolute inset-x-0 flex flex-col items-center justify-center pointer-events-none select-none" style={{ bottom: "clamp(3rem,8vh,5rem)", zIndex: 30 }}>
-      <div className="absolute inset-x-0 -inset-y-12 -z-10 pointer-events-none" style={{ background: "radial-gradient(ellipse 90% 80% at 50% 70%,rgba(0,0,0,.8) 0%,rgba(0,0,0,.4) 60%,transparent 100%)" }} />
+    <div
+      className="absolute inset-x-0 flex flex-col items-center justify-center pointer-events-none select-none"
+      style={{ bottom: "clamp(3rem,8vh,5rem)", zIndex: 30 }}
+    >
+      <div
+        className="absolute inset-x-0 -inset-y-12 -z-10 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse 90% 80% at 50% 70%,rgba(0,0,0,.8) 0%,rgba(0,0,0,.4) 60%,transparent 100%)",
+        }}
+      />
       {t < T_HELL_END && (
-        <div className="flex flex-wrap items-baseline justify-center gap-x-4 uppercase animate-rise-fade-in" style={{ fontFamily: "var(--font-bebas),'Arial Narrow',sans-serif", fontSize: "clamp(2rem,6vw,4.5rem)", letterSpacing: ".18em" }}>
-          <span style={{ color: "#3ddc84", textShadow: "0 0 30px rgba(61,220,132,.9),0 4px 16px rgba(0,0,0,.95)" }}>Hell</span>
-          <span style={{ color: "#fff", textShadow: "0 0 25px rgba(255,255,255,.8),0 4px 16px rgba(0,0,0,.95)" }}>Answers</span>
-          <span style={{ color: "#fbbf24", textShadow: "0 0 30px rgba(251,191,36,.9),0 4px 16px rgba(0,0,0,.95)" }}>to me</span>
+        <div
+          className="animate-rise-fade-in text-center px-4"
+          style={{
+            fontFamily: "var(--font-oswald), sans-serif",
+            fontSize: "clamp(1.6rem, 5vw, 3.8rem)",
+            fontWeight: 700,
+            letterSpacing: "0.36em",
+            textTransform: "uppercase",
+            color: "#f3f5f4",
+            textShadow: "0 2px 18px rgba(0,0,0,0.95), 0 0 35px rgba(0,0,0,0.85)",
+          }}
+        >
+          HELL ANSWERS TO ME
         </div>
       )}
       {t >= T_HELL_END && t < T_FORIAM_END && (
-        <div className="animate-rise-fade-in" style={{ fontFamily: "var(--font-oswald),sans-serif", fontSize: "clamp(1.5rem,4vw,3.5rem)", fontWeight: 700, letterSpacing: ".35em", textTransform: "uppercase", color: "#e5e7eb", textShadow: "0 0 30px rgba(255,255,255,.8),0 4px 16px rgba(0,0,0,.95)" }}>
+        <div
+          className="animate-rise-fade-in text-center px-4"
+          style={{
+            fontFamily: "var(--font-oswald), sans-serif",
+            fontSize: "clamp(1.2rem, 3.8vw, 2.8rem)",
+            fontWeight: 600,
+            letterSpacing: "0.45em",
+            textTransform: "uppercase",
+            color: "#d1ded7",
+            textShadow: "0 2px 14px rgba(0,0,0,0.95), 0 0 30px rgba(0,0,0,0.85)",
+          }}
+        >
           FOR I AM
         </div>
       )}
       {t >= T_FORIAM_END && t < T_DOOM_END && (
-        <div className="flex flex-col items-center">
-          <span style={{ fontFamily: "var(--font-oswald),sans-serif", fontSize: "clamp(.8rem,2vw,1.3rem)", fontWeight: 500, letterSpacing: ".45em", textTransform: "uppercase", color: "#7bb898", marginBottom: ".25rem", textShadow: "0 0 20px rgba(61,220,132,.5)" }}>FOR I AM</span>
-          <h2 className="animate-doom-pop animate-avengers-glow" style={{ fontFamily: "var(--font-bebas),'Arial Narrow',sans-serif", fontSize: "clamp(5rem,17vw,13rem)", lineHeight: 1, letterSpacing: ".1em", textTransform: "uppercase", background: "linear-gradient(180deg,#fff 0%,#3ddc84 55%,#157338 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", filter: "drop-shadow(0 0 35px rgba(61,220,132,.95)) drop-shadow(0 0 75px rgba(61,220,132,.6)) drop-shadow(0 8px 24px rgba(0,0,0,.95))" }}>
+        <div className="flex flex-col items-center justify-center text-center px-4 w-full">
+          <span
+            className="doom-pretitle tracking-[.45em] sm:tracking-[.55em] uppercase font-semibold mb-2"
+            style={{
+              fontFamily: "var(--font-oswald), sans-serif",
+              fontSize: "clamp(0.7rem, 1.4vw, 1.05rem)",
+              color: "#9cb5a7",
+              textShadow: "0 2px 12px rgba(0,0,0,0.95)",
+            }}
+          >
+            FOR I AM
+          </span>
+          <h2
+            className="doom-hero-title animate-doom-reveal"
+            style={{
+              fontFamily: "var(--font-bebas), 'Arial Narrow', sans-serif",
+            }}
+          >
             DOOM
           </h2>
         </div>
@@ -518,34 +562,58 @@ const CinematicScroll = forwardRef<CinematicScrollHandle, CinematicScrollProps>(
       >
         <div ref={stageRef} id="cinematic-stage" className="sticky top-0 w-full overflow-hidden select-none bg-black" style={{ height: "100svh" }}>
 
-          {/* Film grain (subtle cinematic texture that doesn't obscure sharpness) */}
-          <div className="absolute inset-0 pointer-events-none opacity-10 mix-blend-overlay" style={{ zIndex: 15, backgroundImage: "radial-gradient(rgba(61,220,132,.12) 1px,transparent 1px)", backgroundSize: "3px 3px" }} />
-
           {/* V1 */}
           <div ref={v1LayerRef} className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 1 }}>
-            <video ref={v1Ref} src="/videos/v1_hd.mp4" muted playsInline preload="auto" onEnded={e => e.currentTarget.pause()} className="w-full h-full object-cover" style={{ filter: "contrast(1.05) brightness(1.0) saturate(1.08)", transform: "translateZ(0)" }} />
+            <video
+              ref={v1Ref}
+              src="/videos/1.mp4?v=2"
+              muted
+              playsInline
+              preload="auto"
+              onEnded={e => e.currentTarget.pause()}
+              className="w-full h-full object-cover object-center"
+              style={{ filter: "contrast(1.06) brightness(1.0) saturate(1.10)", transform: "translateZ(0)", imageRendering: "-webkit-optimize-contrast" }}
+            />
           </div>
 
           {/* T1 */}
-          <div ref={t1LayerRef} className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 pointer-events-none" style={{ zIndex: 20, opacity: 0, visibility: "hidden", background: "#000" }}>
-            <h2 style={{ fontFamily: "var(--font-bebas),sans-serif", fontSize: "clamp(2.5rem,7vw,5rem)", letterSpacing: ".12em", textTransform: "uppercase", color: "#f2f2f0", lineHeight: 1.1, marginBottom: "1rem" }}>THE GATES HAVE OPENED</h2>
-            <p style={{ fontFamily: "var(--font-oswald),sans-serif", fontSize: "clamp(.7rem,1.8vw,1.1rem)", letterSpacing: ".3em", textTransform: "uppercase", color: "#3ddc84", fontWeight: 500 }}>ARE YOU READY TO FACE WHAT LIES AHEAD</p>
+          <div ref={t1LayerRef} className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-6 pointer-events-none" style={{ zIndex: 20, opacity: 0, visibility: "hidden", background: "#000" }}>
+            <h2 style={{ fontFamily: "var(--font-oswald), sans-serif", fontSize: "clamp(2rem, 5.8vw, 4.5rem)", fontWeight: 700, letterSpacing: ".22em", textTransform: "uppercase", color: "#f3f5f4", lineHeight: 1.1, marginBottom: "0.85rem" }}>THE GATES HAVE OPENED</h2>
+            <p style={{ fontFamily: "var(--font-oswald), sans-serif", fontSize: "clamp(.65rem, 1.6vw, 1rem)", letterSpacing: ".38em", textTransform: "uppercase", color: "#9cb5a7", fontWeight: 500 }}>ARE YOU READY TO FACE WHAT LIES AHEAD</p>
           </div>
 
           {/* V2 */}
           <div ref={v2LayerRef} className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0 }}>
-            <video ref={v2Ref} src="/videos/v2_hd.mp4" muted playsInline preload="auto" onEnded={e => e.currentTarget.pause()} className="w-full h-full object-cover" style={{ filter: "contrast(1.05) brightness(1.0) saturate(1.08)", transform: "translateZ(0)" }} />
+            <video
+              ref={v2Ref}
+              src="/videos/v2_hd.mp4"
+              muted
+              playsInline
+              preload="auto"
+              onEnded={e => e.currentTarget.pause()}
+              className="w-full h-full object-cover object-center"
+              style={{ filter: "contrast(1.06) brightness(1.0) saturate(1.10)", transform: "translateZ(0)", imageRendering: "-webkit-optimize-contrast" }}
+            />
           </div>
 
           {/* T2 */}
-          <div ref={t2LayerRef} className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 pointer-events-none" style={{ zIndex: 20, opacity: 0, visibility: "hidden", background: "#000" }}>
-            <h2 style={{ fontFamily: "var(--font-bebas),sans-serif", fontSize: "clamp(2.5rem,7vw,5rem)", letterSpacing: ".12em", textTransform: "uppercase", color: "#f2f2f0", lineHeight: 1.1, marginBottom: "1rem" }}>THE RULER AWAITS</h2>
-            <p style={{ fontFamily: "var(--font-oswald),sans-serif", fontSize: "clamp(.7rem,1.8vw,1.1rem)", letterSpacing: ".3em", textTransform: "uppercase", color: "#c9a227", fontWeight: 500 }}>ENTER THE SANCTUM OF DOOM</p>
+          <div ref={t2LayerRef} className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-6 pointer-events-none" style={{ zIndex: 20, opacity: 0, visibility: "hidden", background: "#000" }}>
+            <h2 style={{ fontFamily: "var(--font-oswald), sans-serif", fontSize: "clamp(2rem, 5.8vw, 4.5rem)", fontWeight: 700, letterSpacing: ".22em", textTransform: "uppercase", color: "#f3f5f4", lineHeight: 1.1, marginBottom: "0.85rem" }}>THE RULER AWAITS</h2>
+            <p style={{ fontFamily: "var(--font-oswald), sans-serif", fontSize: "clamp(.65rem, 1.6vw, 1rem)", letterSpacing: ".38em", textTransform: "uppercase", color: "#dfc17b", fontWeight: 500 }}>ENTER THE SANCTUM OF DOOM</p>
           </div>
 
           {/* V3 */}
           <div ref={v3LayerRef} className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0 }}>
-            <video ref={v3Ref} src="/videos/v3_hd.mp4" muted playsInline preload="auto" onEnded={e => e.currentTarget.pause()} className="w-full h-full object-cover" style={{ filter: "contrast(1.05) brightness(1.0) saturate(1.08)", transform: "translateZ(0)" }} />
+            <video
+              ref={v3Ref}
+              src="/videos/v3_hd.mp4"
+              muted
+              playsInline
+              preload="auto"
+              onEnded={e => e.currentTarget.pause()}
+              className="w-full h-full object-cover object-center"
+              style={{ filter: "contrast(1.06) brightness(1.0) saturate(1.10)", transform: "translateZ(0)", imageRendering: "-webkit-optimize-contrast" }}
+            />
           </div>
 
           {/* Audio */}
@@ -554,7 +622,12 @@ const CinematicScroll = forwardRef<CinematicScrollHandle, CinematicScrollProps>(
           {/* Freeze frame */}
           <div ref={freezeLayerRef} className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0 }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/v3_freeze_frame.jpg" alt="Doom on the Throne" className="w-full h-full object-cover" style={{ filter: "contrast(1.05) brightness(1.0) saturate(1.08)", transform: "translateZ(0)" }} />
+            <img
+              src="/images/v3_freeze_frame.jpg"
+              alt="Doom on the Throne"
+              className="w-full h-full object-cover object-center"
+              style={{ filter: "contrast(1.06) brightness(1.0) saturate(1.10)", transform: "translateZ(0)", imageRendering: "-webkit-optimize-contrast" }}
+            />
           </div>
 
           {/* Vignette */}
@@ -584,11 +657,12 @@ const CinematicScroll = forwardRef<CinematicScrollHandle, CinematicScrollProps>(
                   fontSize: "clamp(.7rem,1.8vw,.95rem)",
                   letterSpacing: ".4em",
                   textTransform: "uppercase",
-                  color: "rgba(61,220,132,.75)",
-                  padding: ".5rem 1.5rem",
-                  border: "1px solid rgba(61,220,132,.3)",
-                  background: "rgba(0,0,0,.6)",
-                  backdropFilter: "blur(8px)",
+                  color: "#c2d1c9",
+                  padding: ".5rem 1.6rem",
+                  border: "1px solid rgba(255,255,255,.14)",
+                  background: "rgba(10,14,12,.85)",
+                  backdropFilter: "blur(12px)",
+                  boxShadow: "0 8px 24px rgba(0,0,0,.7)",
                 }}
               >
                 ▶ TAP TO CONTINUE
@@ -600,7 +674,7 @@ const CinematicScroll = forwardRef<CinematicScrollHandle, CinematicScrollProps>(
           <div id="unmute-btn" className="absolute inset-x-0 mx-auto w-fit" style={{ top: "5rem", zIndex: 40, display: "none", pointerEvents: "auto" }}>
             <button type="button"
               onClick={() => { const a = audioRef.current; if (!a) return; a.muted = false; a.play().catch(() => {}); (document.getElementById("unmute-btn") as HTMLDivElement).style.display = "none"; }}
-              className="px-6 py-3 border border-[#3ddc84]/50 bg-black/90 backdrop-blur-md text-[#3ddc84] text-sm tracking-[.2em] uppercase flex items-center gap-2.5 hover:scale-105 transition-all cursor-pointer"
+              className="px-6 py-3 border border-white/14 bg-black/92 backdrop-blur-xl text-[#f3f5f4] text-xs sm:text-sm tracking-[.25em] uppercase flex items-center gap-2.5 hover:border-[#10b981]/50 hover:text-[#a7f3d0] transition-all cursor-pointer shadow-2xl"
               style={{ fontFamily: "var(--font-oswald),sans-serif" }}
             >
               ▶ TAP TO ENABLE SOUND

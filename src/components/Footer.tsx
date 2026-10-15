@@ -17,13 +17,13 @@ export default function Footer() {
           {/* Brand */}
           <div className="flex items-center gap-3">
             <div
-              className="relative w-8 h-8 flex items-center justify-center border border-[#3ddc84]/25"
-              style={{ background: "rgba(61,220,132,0.05)" }}
+              className="relative w-8 h-8 flex items-center justify-center border border-[#10b981]/25"
+              style={{ background: "rgba(16,185,129,0.05)" }}
             >
               <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
-                <path d="M9 1L17 15H1L9 1Z" stroke="#3ddc84" strokeWidth="1.5" fill="none"/>
-                <path d="M9 5L14 14H4L9 5Z" fill="#3ddc84" opacity="0.2"/>
-                <circle cx="9" cy="9" r="1.5" fill="#3ddc84"/>
+                <path d="M9 1L17 15H1L9 1Z" stroke="#10b981" strokeWidth="1.5" fill="none"/>
+                <path d="M9 5L14 14H4L9 5Z" fill="#10b981" opacity="0.2"/>
+                <circle cx="9" cy="9" r="1.5" fill="#10b981"/>
               </svg>
             </div>
             <div>
@@ -33,21 +33,21 @@ export default function Footer() {
               >
                 {EVENT_CONFIG.name} — {EVENT_CONFIG.subtitle}
               </div>
-              <div className="text-[9px] text-[#3a5044] mt-0.5 tracking-[0.2em]">{EVENT_CONFIG.department}</div>
+              <div className="text-[9px] text-[#4a6355] mt-0.5 tracking-[0.2em]">{EVENT_CONFIG.department}</div>
             </div>
           </div>
 
           {/* Center status */}
           <div className="flex items-center gap-2 text-center text-[10px]">
-            <span className="w-1 h-1 bg-[#3ddc84]" />
-            <span className="text-[#3a5044]">Official AIML Department Event • Registration via Google Forms</span>
+            <span className="w-1 h-1 bg-[#10b981]" />
+            <span className="text-[#4a6355]">Official AIML Department Event • Registration via Google Forms</span>
           </div>
 
           {/* Back to top */}
           <button
             onClick={scrollToTop}
             type="button"
-            className="inline-flex items-center gap-2 px-3.5 py-2 border border-white/8 hover:border-[#3ddc84]/35 hover:text-[#3ddc84] transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-3.5 py-2 border border-white/8 hover:border-[#10b981]/35 hover:text-[#a7f3d0] transition-all cursor-pointer"
             style={{ background: "rgba(255,255,255,0.02)" }}
           >
             <span className="tracking-[0.2em] uppercase text-[10px]">ASCEND</span>

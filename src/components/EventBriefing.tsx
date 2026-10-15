@@ -127,25 +127,25 @@ export default function EventBriefing({ onRegisterClick }: EventBriefingProps) {
                   className="absolute top-0 left-0 right-0 h-px"
                   style={{
                     background: isGold
-                      ? "linear-gradient(90deg, #c9a22760, transparent)"
-                      : "linear-gradient(90deg, #3ddc8460, transparent)",
+                      ? "linear-gradient(90deg, #c5a05960, transparent)"
+                      : "linear-gradient(90deg, #10b98160, transparent)",
                   }}
                 />
 
                 <div className="flex items-center justify-between mb-4">
-                  <span className={`text-[9px] font-mono tracking-[0.38em] uppercase ${isGold ? "text-[#c9a227]" : "text-[#3ddc84]"}`}>
+                  <span className={`text-[9px] font-mono tracking-[0.38em] uppercase ${isGold ? "text-[#dfc17b]" : "text-[#8ca396]"}`}>
                     {card.label}
                   </span>
                   <div
                     className="w-7 h-7 flex items-center justify-center border"
                     style={{
                       background: "rgba(255,255,255,0.04)",
-                      borderColor: isGold ? "rgba(201,162,39,0.25)" : "rgba(61,220,132,0.2)",
+                      borderColor: isGold ? "rgba(197,160,89,0.25)" : "rgba(16,185,129,0.2)",
                     }}
                   >
                     <Icon
                       className="w-3.5 h-3.5"
-                      style={{ color: isGold ? "#c9a227" : "#3ddc84" }}
+                      style={{ color: isGold ? "#dfc17b" : "#6ee7b7" }}
                     />
                   </div>
                 </div>
@@ -185,8 +185,8 @@ export default function EventBriefing({ onRegisterClick }: EventBriefingProps) {
 
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
             <div className="max-w-2xl">
-              <div className="flex items-center gap-2 text-[10px] font-mono text-[#3ddc84] uppercase tracking-[0.35em] mb-3">
-                <Compass className="w-3.5 h-3.5" />
+              <div className="flex items-center gap-2 text-[10px] font-mono text-[#8ca396] uppercase tracking-[0.35em] mb-3">
+                <Compass className="w-3.5 h-3.5 text-[#10b981]" />
                 THE SOVEREIGN DECREE
               </div>
 
@@ -203,7 +203,7 @@ export default function EventBriefing({ onRegisterClick }: EventBriefingProps) {
               <button
                 onClick={onRegisterClick}
                 type="button"
-                className="group flex items-center gap-2 px-6 py-3 bg-[#3ddc84] hover:bg-[#4ee893] text-[#050605] font-extrabold font-mono text-[11px] tracking-[0.2em] uppercase transition-all glow-emerald hover:scale-105 cursor-pointer"
+                className="group flex items-center gap-2 px-6 py-3 bg-gradient-to-b from-[#10b981] to-[#047857] hover:from-[#34d399] hover:to-[#059669] text-white border border-[#34d399]/40 font-bold font-mono text-[11px] tracking-[0.22em] uppercase transition-all shadow-[0_4px_16px_rgba(16,185,129,0.35)] hover:scale-105 cursor-pointer"
               >
                 REGISTER NOW
                 <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -211,7 +211,7 @@ export default function EventBriefing({ onRegisterClick }: EventBriefingProps) {
 
               <a
                 href="#event-highlights"
-                className="flex items-center gap-2 px-5 py-3 border border-white/12 hover:border-[#3ddc84]/38 text-[11px] font-mono tracking-wider uppercase text-[#6a8078] hover:text-[#f2f2f0] transition-all"
+                className="flex items-center gap-2 px-5 py-3 border border-white/12 hover:border-[#10b981]/40 text-[11px] font-mono tracking-wider uppercase text-[#8ca396] hover:text-[#f2f2f0] transition-all"
                 style={{ background: "rgba(255,255,255,0.03)" }}
               >
                 View Highlights

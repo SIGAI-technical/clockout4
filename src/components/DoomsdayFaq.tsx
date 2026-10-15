@@ -95,7 +95,7 @@ export default function DoomsdayFaq() {
                   className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 cursor-pointer"
                 >
                   <div className="flex items-center gap-3.5">
-                    <span className="text-[9px] font-mono text-[#3ddc84] font-black tracking-[0.3em] flex-shrink-0">
+                    <span className="text-[9px] font-mono text-[#10b981] font-bold tracking-[0.3em] flex-shrink-0">
                       {faq.code}
                     </span>
                     <span className="font-cinzel font-bold text-sm sm:text-base text-[#f2f2f0] leading-snug">
@@ -106,13 +106,13 @@ export default function DoomsdayFaq() {
                   <div
                     className="w-6 h-6 flex items-center justify-center flex-shrink-0 border transition-all duration-200"
                     style={{
-                      borderColor: isOpen ? "rgba(61,220,132,0.4)" : "rgba(255,255,255,0.1)",
-                      background: isOpen ? "rgba(61,220,132,0.08)" : "transparent",
+                      borderColor: isOpen ? "rgba(16,185,129,0.4)" : "rgba(255,255,255,0.1)",
+                      background: isOpen ? "rgba(16,185,129,0.08)" : "transparent",
                     }}
                   >
                     <ChevronDown
                       className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                        isOpen ? "rotate-180 text-[#3ddc84]" : "text-[#5a7066]"
+                        isOpen ? "rotate-180 text-[#10b981]" : "text-[#5a7066]"
                       }`}
                     />
                   </div>

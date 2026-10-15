@@ -76,7 +76,7 @@ END:VCALENDAR`;
         <button
           onClick={onClose}
           aria-label="Close modal"
-          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center border border-white/8 hover:border-[#3ddc84]/35 text-[#5a7066] hover:text-[#3ddc84] transition-all cursor-pointer"
+          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center border border-white/8 hover:border-[#10b981]/35 text-[#5a7066] hover:text-[#a7f3d0] transition-all cursor-pointer"
           style={{ background: "rgba(255,255,255,0.03)" }}
         >
           <X className="w-4 h-4" />
@@ -84,13 +84,13 @@ END:VCALENDAR`;
 
         <div className="flex items-center gap-3 mb-5">
           <div
-            className="p-2.5 border text-[#3ddc84] flex-shrink-0"
-            style={{ background: "rgba(61,220,132,0.08)", borderColor: "rgba(61,220,132,0.22)" }}
+            className="p-2.5 border text-[#10b981] flex-shrink-0"
+            style={{ background: "rgba(16,185,129,0.08)", borderColor: "rgba(16,185,129,0.22)" }}
           >
             <ShieldAlert className="w-5 h-5" />
           </div>
           <div>
-            <div className="text-[9px] font-mono uppercase tracking-[0.35em] text-[#3ddc84] mb-0.5">
+            <div className="text-[9px] font-mono uppercase tracking-[0.35em] text-[#8ca396] mb-0.5">
               Official Latverian Dispatch
             </div>
             <h3 id="modal-title" className="text-lg font-bold font-cinzel text-[#f2f2f0]">
@@ -110,7 +110,7 @@ END:VCALENDAR`;
                 href={formUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#3ddc84] hover:bg-[#4ee893] text-[#050605] font-black text-sm tracking-[0.18em] uppercase transition-all duration-200 cursor-pointer"
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-b from-[#10b981] to-[#047857] hover:from-[#34d399] hover:to-[#059669] text-white border border-[#34d399]/40 font-bold text-sm tracking-[0.22em] uppercase transition-all duration-200 shadow-[0_8px_24px_rgba(16,185,129,0.35)] cursor-pointer"
               >
                 <span>Proceed to Google Form</span>
                 <ExternalLink className="w-4 h-4" />
@@ -119,13 +119,13 @@ END:VCALENDAR`;
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="p-4 bg-[#050605]/80 border border-[#3ddc84]/18">
-              <div className="text-[9px] font-mono uppercase tracking-[0.3em] text-[#3ddc84] mb-1.5">
+            <div className="p-4 bg-[#050605]/80 border border-[#10b981]/18">
+              <div className="text-[9px] font-mono uppercase tracking-[0.3em] text-[#10b981] mb-1.5 font-semibold">
                 Portal Status: Awaiting Form Link
               </div>
               <p className="text-sm text-[#a3a8a4] leading-relaxed">
                 The official registration Google Form link has not yet been attached to this deployment
-                (<code className="text-xs text-[#3ddc84] font-mono">NEXT_PUBLIC_GOOGLE_FORM_URL</code>).
+                (<code className="text-xs text-[#a7f3d0] font-mono">NEXT_PUBLIC_GOOGLE_FORM_URL</code>).
                 Registration will unlock once published by the AIML Department organizers.
               </p>
             </div>
@@ -148,14 +148,14 @@ END:VCALENDAR`;
                 className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-white/10 hover:border-white/20 text-xs text-[#f2f2f0] font-medium tracking-wider uppercase transition-colors cursor-pointer"
                 style={{ background: "rgba(255,255,255,0.04)" }}
               >
-                {copied ? <Check className="w-3.5 h-3.5 text-[#3ddc84]" /> : <Copy className="w-3.5 h-3.5" />}
+                {copied ? <Check className="w-3.5 h-3.5 text-[#10b981]" /> : <Copy className="w-3.5 h-3.5" />}
                 <span>{copied ? "Details Copied!" : "Copy Event Details"}</span>
               </button>
               <button
                 type="button"
                 onClick={handleDownloadCalendar}
-                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-[#3ddc84]/25 hover:border-[#3ddc84]/45 text-xs text-[#3ddc84] font-medium tracking-wider uppercase transition-colors cursor-pointer"
-                style={{ background: "rgba(61,220,132,0.06)" }}
+                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-[#10b981]/25 hover:border-[#10b981]/45 text-xs text-[#a7f3d0] font-medium tracking-wider uppercase transition-colors cursor-pointer"
+                style={{ background: "rgba(16,185,129,0.06)" }}
               >
                 <Calendar className="w-3.5 h-3.5" />
                 <span>Save to Calendar</span>
@@ -166,7 +166,7 @@ END:VCALENDAR`;
 
         <div className="mt-6 pt-4 flex justify-between items-center text-[10px] text-[#3a4f40]" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
           <span>{EVENT_CONFIG.department}</span>
-          <span className="font-mono text-[#3ddc84]/60">LATVERIA // CLOCKOUT 4.0</span>
+          <span className="font-mono text-[#10b981]/60">LATVERIA // CLOCKOUT 4.0</span>
         </div>
       </div>
     </div>

@@ -6,10 +6,10 @@ import { Cpu, Brain, Zap, Trophy } from "lucide-react";
 
 const ICONS = [Cpu, Brain, Zap, Trophy];
 const ACCENT_COLORS = [
-  { border: "rgba(61,220,132,0.22)", glow: "rgba(61,220,132,0.1)", text: "#3ddc84", track: "TRACK 01" },
-  { border: "rgba(61,220,132,0.22)", glow: "rgba(61,220,132,0.1)", text: "#3ddc84", track: "TRACK 02" },
-  { border: "rgba(61,220,132,0.22)", glow: "rgba(61,220,132,0.1)", text: "#3ddc84", track: "TRACK 03" },
-  { border: "rgba(201,162,39,0.28)", glow: "rgba(201,162,39,0.1)", text: "#c9a227", track: "FINALE" },
+  { border: "rgba(16,185,129,0.22)", glow: "rgba(16,185,129,0.1)", text: "#6ee7b7", track: "TRACK 01" },
+  { border: "rgba(16,185,129,0.22)", glow: "rgba(16,185,129,0.1)", text: "#6ee7b7", track: "TRACK 02" },
+  { border: "rgba(16,185,129,0.22)", glow: "rgba(16,185,129,0.1)", text: "#6ee7b7", track: "TRACK 03" },
+  { border: "rgba(197,160,89,0.28)", glow: "rgba(197,160,89,0.1)", text: "#dfc17b", track: "FINALE" },
 ];
 
 export default function EventHighlights() {
@@ -131,7 +131,7 @@ export default function EventHighlights() {
 
                 {/* Title */}
                 <h3
-                  className="font-cinzel font-bold text-xl sm:text-2xl text-[#f2f2f0] group-hover:text-[#3ddc84] transition-colors duration-300 leading-snug mb-3"
+                  className="font-cinzel font-bold text-xl sm:text-2xl text-[#f2f2f0] group-hover:text-[#a7f3d0] transition-colors duration-300 leading-snug mb-3"
                 >
                   {item.title}
                 </h3>

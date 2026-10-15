@@ -48,8 +48,8 @@ const PHASES: TimelinePhase[] = [
 ];
 
 const STATUS_COLORS: Record<string, string> = {
-  SCHEDULED: "#3ddc84",
-  UPCOMING: "#c9a227",
+  SCHEDULED: "#10b981",
+  UPCOMING: "#c5a059",
   CLASSIFIED: "#8a9490",
 };
 
@@ -142,11 +142,11 @@ export default function DoomsdayTimeline() {
                 >
                   {/* Left accent indicator */}
                   {isActive && (
-                    <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#3ddc84] to-[#c9a227]" />
+                    <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#10b981] to-[#c5a059]" />
                   )}
 
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-[9px] font-mono tracking-[0.32em] uppercase text-[#3ddc84]">
+                    <span className="text-[9px] font-mono tracking-[0.32em] uppercase text-[#8ca396]">
                       {p.phase} {"//"} {p.codename}
                     </span>
                     <span
@@ -189,7 +189,7 @@ export default function DoomsdayTimeline() {
             <div
               className="absolute top-0 inset-x-0 h-px"
               style={{
-                background: "linear-gradient(90deg, transparent, #3ddc84, #c9a227, transparent)",
+                background: "linear-gradient(90deg, transparent, #10b981, #c5a059, transparent)",
               }}
             />
 
@@ -200,13 +200,13 @@ export default function DoomsdayTimeline() {
 
             <div className="flex items-center gap-3 mb-6">
               <div
-                className="w-10 h-10 border border-[#3ddc84]/38 flex items-center justify-center text-[#3ddc84]"
-                style={{ background: "rgba(61,220,132,0.08)" }}
+                className="w-10 h-10 border border-[#10b981]/38 flex items-center justify-center text-[#10b981]"
+                style={{ background: "rgba(16,185,129,0.08)" }}
               >
                 <Terminal className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-[9px] font-mono tracking-[0.32em] uppercase text-[#3ddc84] block">
+                <span className="text-[9px] font-mono tracking-[0.32em] uppercase text-[#8ca396] block">
                   DIRECTIVE DOSSIER
                 </span>
                 <h4 className="font-cinzel font-black text-xl sm:text-2xl text-[#f2f2f0] mt-0.5">
@@ -215,11 +215,11 @@ export default function DoomsdayTimeline() {
               </div>
             </div>
 
-            <div className="p-4 border border-white/5 bg-black/40 mb-6 font-mono text-xs text-[#7bb898] flex items-center gap-3">
-              <span className="text-[#c9a227] font-bold">TIMING:</span>
+            <div className="p-4 border border-white/5 bg-black/40 mb-6 font-mono text-xs text-[#8ca396] flex items-center gap-3">
+              <span className="text-[#c5a059] font-bold">TIMING:</span>
               <span>{PHASES[activePhaseIndex].timeRange}</span>
               <span className="text-white/20">•</span>
-              <span className="text-[#3ddc84] font-bold">STAGE:</span>
+              <span className="text-[#10b981] font-bold">STAGE:</span>
               <span>{PHASES[activePhaseIndex].phase}</span>
             </div>
 
@@ -238,7 +238,7 @@ export default function DoomsdayTimeline() {
                     key={i}
                     className="p-3 border border-white/6 bg-white/[0.02] flex items-center gap-2 text-xs font-mono text-[#d1d5db]"
                   >
-                    <span className="w-1.5 h-1.5 bg-[#3ddc84] flex-shrink-0" />
+                    <span className="w-1.5 h-1.5 bg-[#10b981] flex-shrink-0" />
                     <span>{item}</span>
                   </div>
                 ))}

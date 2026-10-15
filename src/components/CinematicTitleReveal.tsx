@@ -16,11 +16,11 @@ const T_V3_END        = 9.333; // Doom throne reaches final frame
 const T_GLOW_START    = 9.7;   // Faint emerald backlight introduces
 const T_TITLE_START   = 10.2;  // CLOCKOUT 4.0 begins smooth scale-up & fade-in
 const T_TITLE_REST    = 13.2;  // Title settles in its final position
-const T_SWEEP_START   = 13.5;  // Specular light sweep starts across letters
-const T_SWEEP_END     = 15.3;  // Specular light sweep finishes
-const T_TAGLINE_START = 15.5;  // THE DOOM TAKEOVER fades in beneath title
-const T_TAGLINE_REST  = 17.2;  // Tagline fully visible; finished title holds
-const T_DETAILS_START = 19.2;  // Event meta cards fade in beneath title
+const T_SWEEP_START   = 13.4;  // Specular light sweep starts across letters
+const T_SWEEP_END     = 14.8;  // Specular light sweep finishes cleanly just ahead of 4.0
+const T_TAGLINE_START = 15.2;  // THE DOOM TAKEOVER fades in beneath title
+const T_TAGLINE_REST  = 16.8;  // Tagline fully visible; finished title holds
+const T_DETAILS_START = 18.8;  // Event meta cards fade in beneath title
 
 // Subtle drifting atmospheric particles behind the title
 const PARTICLES = [
@@ -49,7 +49,8 @@ export default function CinematicTitleReveal({
         titleScale: 0.92,
         titleY: 12,
         showSweep: false,
-        sweepPos: -30,
+        sweepPos: -12,
+        sweepOpacity: 0,
         tagOpacity: 0,
         tagY: 6,
         detailsOpacity: 0,
@@ -66,7 +67,8 @@ export default function CinematicTitleReveal({
         titleScale: 1,
         titleY: 0,
         showSweep: false,
-        sweepPos: 140,
+        sweepPos: 104,
+        sweepOpacity: 0,
         tagOpacity: 1,
         tagY: 0,
         detailsOpacity: 1,
@@ -97,15 +99,20 @@ export default function CinematicTitleReveal({
       titleY = 12 * (1 - ease);
     }
 
-    // 3. Narrow emerald-green / silver light sweep across the letters
+    // 3. Specular diamond-silver light sweep across letters — travels just ahead of 4.0 then gracefully dissolves
     let showSweep = false;
-    let sweepPos = -30;
+    let sweepPos = -10;
+    let sweepOpacity = 0;
     if (curT >= T_SWEEP_START && curT <= T_SWEEP_END) {
       showSweep = true;
       const swP = (curT - T_SWEEP_START) / (T_SWEEP_END - T_SWEEP_START);
-      sweepPos = -20 + swP * 140; // sweeps smoothly from -20% to 120%
-    } else if (curT > T_SWEEP_END) {
-      sweepPos = 140; // held past the text
+      // Sweeps from -10% to 104% (just slightly ahead of 4.0)
+      sweepPos = -10 + swP * 114;
+      // As it passes 4.0 (swP >= 0.78), cleanly fade opacity to 0
+      sweepOpacity = swP < 0.78 ? 1 : Math.max(0, 1 - (swP - 0.78) / 0.22);
+    } else {
+      sweepPos = 104;
+      sweepOpacity = 0;
     }
 
     // 4. Tagline: THE DOOM TAKEOVER appears beneath the title with an elegant fade
@@ -138,6 +145,7 @@ export default function CinematicTitleReveal({
       titleY,
       showSweep,
       sweepPos,
+      sweepOpacity,
       tagOpacity,
       tagY,
       detailsOpacity,
@@ -206,16 +214,20 @@ export default function CinematicTitleReveal({
           opacity: state.titleOpacity,
           transform: `scale(${state.titleScale}) translateY(${state.titleY}px)`,
           ["--sweep-pos" as string]: `${state.sweepPos}%`,
+          ["--sweep-opacity" as string]: `${state.sweepOpacity}`,
         }}
       >
         {/* Single Monumental Heading */}
         <h1 className="cinematic-title">
           CLOCKOUT <span className="title-number">4.0</span>
-          {/* Anamorphic light sweep flare */}
+          {/* Anamorphic light sweep flare — travels just ahead of 4.0 then gracefully dissolves */}
           {state.showSweep && (
             <span
               className="title-sweep-flare"
-              style={{ left: `calc(${state.sweepPos}% - 70px)` }}
+              style={{
+                left: `${state.sweepPos}%`,
+                opacity: state.sweepOpacity,
+              }}
               aria-hidden="true"
             />
           )}
@@ -235,7 +247,7 @@ export default function CinematicTitleReveal({
 
       {/* ── Event Details & Registration Appearing Beneath During Normal Scrolling ── */}
       <div
-        className="relative z-20 flex flex-col items-center mt-5 sm:mt-7 max-w-2xl w-full"
+        className="relative z-20 flex flex-col items-center mt-3 sm:mt-5 md:mt-7 max-w-2xl w-full px-2"
         style={{
           opacity: state.detailsOpacity,
           transform: `translateY(${state.detailsY}px)`,
@@ -243,66 +255,69 @@ export default function CinematicTitleReveal({
           transition: isCompleted ? "none" : "opacity 0.4s ease-out, transform 0.4s ease-out",
         }}
       >
-        {/* AIML Department Badge */}
+        {/* AIML Department Badge — Sovereign Obsidian Glass */}
         <div
-          className="inline-flex items-center gap-2 mb-3 sm:mb-4 backdrop-blur-md px-3.5 py-1.5"
+          className="inline-flex items-center gap-2 mb-2 sm:mb-3 px-3.5 py-1.5 backdrop-blur-xl"
           style={{
-            borderLeft: "2px solid #3ddc84",
-            background: "rgba(0,0,0,0.85)",
-            color: "#3ddc84",
-            fontSize: "0.62rem",
-            fontFamily: "var(--font-inter),monospace",
-            fontWeight: 700,
-            letterSpacing: "0.26em",
+            borderLeft: "2px solid #10b981",
+            borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+            borderRight: "1px solid rgba(255, 255, 255, 0.05)",
+            borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+            background: "rgba(10, 14, 12, 0.85)",
+            color: "#c7d6cf",
+            fontSize: "clamp(0.58rem, 1.6vw, 0.68rem)",
+            fontFamily: "var(--font-inter), monospace",
+            fontWeight: 600,
+            letterSpacing: "0.32em",
             textTransform: "uppercase",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.8)",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.06)",
           }}
         >
-          <span className="w-1.5 h-1.5 bg-[#3ddc84] animate-status-pulse flex-shrink-0" />
+          <span className="w-1.5 h-1.5 bg-[#10b981] animate-status-pulse flex-shrink-0 shadow-[0_0_8px_rgba(16,185,129,0.7)]" />
           AIML DEPARTMENT PRESENTS
         </div>
 
         {/* Event Meta Cards: Venue, Date, Time */}
         <div
-          className="w-full backdrop-blur-xl"
+          className="w-full backdrop-blur-2xl"
           style={{
-            background: "rgba(8, 12, 9, 0.88)",
-            border: "1px solid rgba(61, 220, 132, 0.22)",
-            boxShadow: "0 18px 48px rgba(0,0,0,0.8), 0 0 25px -10px rgba(61,220,132,0.2)",
+            background: "rgba(8, 12, 10, 0.88)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            boxShadow: "0 24px 60px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.06)",
           }}
         >
-          <div className="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-white/10">
-            <div className="flex items-center gap-2.5 px-4 py-2.5 sm:py-3 flex-1 text-left">
-              <MapPin className="w-3.5 h-3.5 text-[#3ddc84] shrink-0" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/8">
+            <div className="flex items-center gap-3 px-3.5 py-2.5 sm:px-4 sm:py-3.5 text-left">
+              <MapPin className="w-3.5 h-3.5 text-[#6ee7b7] shrink-0 opacity-80" />
               <div>
-                <div className="text-[8px] font-mono text-[#3ddc84] tracking-[.32em] uppercase">
+                <div className="text-[8px] font-mono text-[#8ca396] tracking-[.36em] uppercase">
                   VENUE
                 </div>
-                <div className="text-xs font-mono text-[#e5e7eb] mt-0.5 font-medium">
+                <div className="text-[11px] sm:text-xs font-mono text-[#f3f5f4] mt-0.5 font-medium leading-tight">
                   {EVENT_CONFIG.location}
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5 px-4 py-2.5 sm:py-3 flex-1 text-left">
-              <Calendar className="w-3.5 h-3.5 text-[#c9a227] shrink-0" />
+            <div className="flex items-center gap-3 px-3.5 py-2.5 sm:px-4 sm:py-3.5 text-left">
+              <Calendar className="w-3.5 h-3.5 text-[#dfc17b] shrink-0 opacity-80" />
               <div>
-                <div className="text-[8px] font-mono text-[#c9a227] tracking-[.32em] uppercase">
+                <div className="text-[8px] font-mono text-[#8ca396] tracking-[.36em] uppercase">
                   DATE
                 </div>
-                <div className="text-xs font-mono text-[#e5e7eb] mt-0.5 font-medium">
+                <div className="text-[11px] sm:text-xs font-mono text-[#f3f5f4] mt-0.5 font-medium leading-tight">
                   {EVENT_CONFIG.date}
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5 px-4 py-2.5 sm:py-3 flex-1 text-left">
-              <Clock className="w-3.5 h-3.5 text-[#3ddc84] shrink-0" />
+            <div className="flex items-center gap-3 px-3.5 py-2.5 sm:px-4 sm:py-3.5 text-left">
+              <Clock className="w-3.5 h-3.5 text-[#6ee7b7] shrink-0 opacity-80" />
               <div>
-                <div className="text-[8px] font-mono text-[#3ddc84] tracking-[.32em] uppercase">
+                <div className="text-[8px] font-mono text-[#8ca396] tracking-[.36em] uppercase">
                   TIME
                 </div>
-                <div className="text-xs font-mono text-[#e5e7eb] mt-0.5 font-medium">
+                <div className="text-[11px] sm:text-xs font-mono text-[#f3f5f4] mt-0.5 font-medium leading-tight">
                   {EVENT_CONFIG.time}
                 </div>
               </div>
@@ -310,16 +325,26 @@ export default function CinematicTitleReveal({
           </div>
         </div>
 
-        {/* Primary Call-to-Action */}
+        {/* Primary Call-to-Action — Sovereign Emerald Plaque */}
         <div className="mt-4 sm:mt-6 pointer-events-auto">
           <button
             onClick={onRegisterClick}
             type="button"
-            className="group px-10 sm:px-14 py-3.5 sm:py-4 bg-[#3ddc84] hover:bg-[#4ee893] text-[#050605] font-black text-xs sm:text-sm tracking-[.24em] uppercase transition-all duration-200 hover:scale-[1.04] active:scale-[.98] cursor-pointer shadow-2xl flex items-center gap-2.5"
-            style={{ fontFamily: "var(--font-oswald),sans-serif" }}
+            className="group relative px-9 sm:px-16 py-3.5 sm:py-4 text-white font-bold text-xs sm:text-sm tracking-[.32em] uppercase transition-all duration-300 hover:scale-[1.03] active:scale-[.98] cursor-pointer flex items-center gap-3 overflow-hidden"
+            style={{
+              fontFamily: "var(--font-oswald), sans-serif",
+              background: "linear-gradient(180deg, #10b981 0%, #059669 50%, #047857 100%)",
+              borderTop: "1px solid rgba(255, 255, 255, 0.4)",
+              borderLeft: "1px solid rgba(255, 255, 255, 0.15)",
+              borderRight: "1px solid rgba(255, 255, 255, 0.15)",
+              borderBottom: "1px solid rgba(0, 0, 0, 0.5)",
+              boxShadow: "0 12px 32px -4px rgba(5, 150, 105, 0.45), 0 4px 12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.25)",
+            }}
           >
-            <span>REGISTER NOW</span>
-            <span className="group-hover:translate-x-1.5 transition-transform">→</span>
+            {/* Specular glint on button hover */}
+            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out pointer-events-none" />
+            <span className="relative z-10 text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">REGISTER NOW</span>
+            <span className="relative z-10 group-hover:translate-x-1.5 transition-transform duration-200 text-white/90">→</span>
           </button>
         </div>
       </div>

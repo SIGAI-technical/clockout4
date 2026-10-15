@@ -78,10 +78,10 @@ export default function RegistrationCta({ onRegisterClick }: RegistrationCtaProp
           />
 
           {/* Corner brackets */}
-          <div className="absolute top-5 left-5 w-10 h-10 border-l-2 border-t-2 border-[#3ddc84]/28 pointer-events-none" />
-          <div className="absolute top-5 right-5 w-10 h-10 border-r-2 border-t-2 border-[#3ddc84]/28 pointer-events-none" />
-          <div className="absolute bottom-5 left-5 w-10 h-10 border-l-2 border-b-2 border-[#c9a227]/22 pointer-events-none" />
-          <div className="absolute bottom-5 right-5 w-10 h-10 border-r-2 border-b-2 border-[#c9a227]/22 pointer-events-none" />
+          <div className="absolute top-5 left-5 w-10 h-10 border-l-2 border-t-2 border-[#10b981]/30 pointer-events-none" />
+          <div className="absolute top-5 right-5 w-10 h-10 border-r-2 border-t-2 border-[#10b981]/30 pointer-events-none" />
+          <div className="absolute bottom-5 left-5 w-10 h-10 border-l-2 border-b-2 border-[#c5a059]/25 pointer-events-none" />
+          <div className="absolute bottom-5 right-5 w-10 h-10 border-r-2 border-b-2 border-[#c5a059]/25 pointer-events-none" />
 
           <div className="relative z-10 px-8 sm:px-14 py-14 sm:py-16">
             {/* Status badge */}
@@ -133,7 +133,7 @@ export default function RegistrationCta({ onRegisterClick }: RegistrationCtaProp
                   href={formUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex items-center gap-3 px-10 sm:px-14 py-4 sm:py-5 bg-[#3ddc84] hover:bg-[#4ee893] text-[#050605] font-black font-mono text-sm sm:text-base tracking-[0.2em] uppercase glow-emerald-lg hover:scale-105 transition-all duration-200 cursor-pointer"
+                  className="group inline-flex items-center gap-3 px-10 sm:px-14 py-4 sm:py-5 bg-gradient-to-b from-[#10b981] to-[#047857] hover:from-[#34d399] hover:to-[#059669] text-white border border-[#34d399]/40 font-bold font-mono text-sm sm:text-base tracking-[0.22em] uppercase shadow-[0_12px_36px_rgba(16,185,129,0.35)] hover:scale-105 transition-all duration-200 cursor-pointer"
                 >
                   REGISTER NOW
                   <ExternalLink className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -142,7 +142,7 @@ export default function RegistrationCta({ onRegisterClick }: RegistrationCtaProp
                 <button
                   onClick={onRegisterClick}
                   type="button"
-                  className="group inline-flex items-center gap-3 px-10 sm:px-14 py-4 sm:py-5 bg-[#3ddc84] hover:bg-[#4ee893] text-[#050605] font-black font-mono text-sm sm:text-base tracking-[0.2em] uppercase glow-emerald-lg hover:scale-105 transition-all duration-200 cursor-pointer"
+                  className="group inline-flex items-center gap-3 px-10 sm:px-14 py-4 sm:py-5 bg-gradient-to-b from-[#10b981] to-[#047857] hover:from-[#34d399] hover:to-[#059669] text-white border border-[#34d399]/40 font-bold font-mono text-sm sm:text-base tracking-[0.22em] uppercase shadow-[0_12px_36px_rgba(16,185,129,0.35)] hover:scale-105 transition-all duration-200 cursor-pointer"
                 >
                   REGISTER NOW
                   <span className="group-hover:translate-x-1 transition-transform">→</span>
@@ -150,8 +150,8 @@ export default function RegistrationCta({ onRegisterClick }: RegistrationCtaProp
               )}
 
               {!isUrlConfigured && (
-                <div className="flex items-center gap-2 text-[10px] font-mono text-[#5a7066]">
-                  <ShieldAlert className="w-3.5 h-3.5 text-[#3ddc84]" />
+                <div className="flex items-center gap-2 text-[10px] font-mono text-[#8ca396]">
+                  <ShieldAlert className="w-3.5 h-3.5 text-[#10b981]" />
                   Google Form link will be attached directly by organizers
                 </div>
               )}
@@ -159,20 +159,20 @@ export default function RegistrationCta({ onRegisterClick }: RegistrationCtaProp
 
             {/* Quick info strip */}
             <div
-              className="mt-12 pt-7 grid grid-cols-1 sm:grid-cols-3 gap-4 text-[11px] font-mono text-[#6a8078]"
+              className="mt-12 pt-7 grid grid-cols-1 sm:grid-cols-3 gap-4 text-[11px] font-mono text-[#8ca396]"
               data-animate
               style={{ opacity: 0, transform: "translateY(12px)", transition: "opacity 0.7s ease 0.54s, transform 0.7s ease 0.54s", borderTop: "1px solid rgba(255,255,255,0.07)" }}
             >
               <div className="flex items-center justify-center gap-2">
-                <MapPin className="w-3.5 h-3.5 text-[#3ddc84]" />
+                <MapPin className="w-3.5 h-3.5 text-[#6ee7b7]" />
                 {EVENT_CONFIG.location}
               </div>
               <div className="flex items-center justify-center gap-2">
-                <Clock className="w-3.5 h-3.5 text-[#3ddc84]" />
+                <Clock className="w-3.5 h-3.5 text-[#6ee7b7]" />
                 {EVENT_CONFIG.time}
               </div>
               <div className="flex items-center justify-center gap-2">
-                <Calendar className="w-3.5 h-3.5 text-[#c9a227]" />
+                <Calendar className="w-3.5 h-3.5 text-[#dfc17b]" />
                 {EVENT_CONFIG.date}
               </div>
             </div>

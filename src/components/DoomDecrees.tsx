@@ -71,7 +71,7 @@ export default function DoomDecrees() {
         >
           {/* Subtle Doom Mask Watermark */}
           <div className="absolute -right-8 -bottom-8 opacity-[0.04] select-none pointer-events-none">
-            <svg width="240" height="240" viewBox="0 0 100 100" fill="currentColor" className={isGold ? "text-[#c9a227]" : "text-[#3ddc84]"}>
+            <svg width="240" height="240" viewBox="0 0 100 100" fill="currentColor" className={isGold ? "text-[#c5a059]" : "text-[#10b981]"}>
               <polygon points="50,5 90,30 80,85 50,95 20,85 10,30" stroke="currentColor" strokeWidth="2" fill="none" />
               <rect x="25" y="40" width="18" height="8" rx="2" fill="currentColor" />
               <rect x="57" y="40" width="18" height="8" rx="2" fill="currentColor" />
@@ -84,9 +84,9 @@ export default function DoomDecrees() {
             <div className="flex items-center gap-2.5">
               <span
                 className="status-dot animate-status-pulse"
-                style={{ background: isGold ? "#c9a227" : "#3ddc84" }}
+                style={{ background: isGold ? "#c5a059" : "#10b981" }}
               />
-              <span className={`text-[10px] font-mono tracking-[0.28em] uppercase ${isGold ? "text-[#c9a227]" : "text-[#3ddc84]"}`}>
+              <span className={`text-[10px] font-mono tracking-[0.28em] uppercase ${isGold ? "text-[#dfc17b]" : "text-[#8ca396]"}`}>
                 LATVERIAN HOLO-TRANSMISSION // ENCRYPTED
               </span>
             </div>
@@ -94,7 +94,7 @@ export default function DoomDecrees() {
             <button
               onClick={nextDecree}
               type="button"
-              className="flex items-center gap-1.5 px-3 py-1.5 border border-white/8 hover:border-[#3ddc84]/38 text-[9px] font-mono text-[#5a7066] hover:text-[#3ddc84] transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 border border-white/8 hover:border-[#10b981]/38 text-[9px] font-mono text-[#8ca396] hover:text-[#a7f3d0] transition-colors cursor-pointer"
               style={{ background: "rgba(255,255,255,0.03)" }}
             >
               <RefreshCw className="w-3 h-3" />
@@ -115,7 +115,7 @@ export default function DoomDecrees() {
 
           {/* Citation Footer */}
           <div className="mt-6 pt-4 flex items-center justify-between" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-            <span className={`text-xs font-mono tracking-[0.22em] uppercase font-bold ${isGold ? "text-[#c9a227]" : "text-[#3ddc84]"}`}>
+            <span className={`text-xs font-mono tracking-[0.22em] uppercase font-bold ${isGold ? "text-[#dfc17b]" : "text-[#8ca396]"}`}>
               {DECREES[index].citation}
             </span>
 
@@ -129,7 +129,7 @@ export default function DoomDecrees() {
                   style={{
                     width: index === i ? "20px" : "6px",
                     height: "4px",
-                    background: index === i ? "#3ddc84" : "rgba(255,255,255,0.18)",
+                    background: index === i ? "#10b981" : "rgba(255,255,255,0.18)",
                   }}
                 />
               ))}

@@ -36,7 +36,7 @@ const VAULT_REWARDS: VaultReward[] = [
       "Faculty Certificate of Merit",
       "Clockout 4.0 Official Swag Package",
     ],
-    borderGlow: "#3ddc84",
+    borderGlow: "#10b981",
   },
   {
     title: "Innovation Vanguard",
@@ -48,7 +48,7 @@ const VAULT_REWARDS: VaultReward[] = [
       "Verified Certificate of Achievement",
       "Department Commendation Badge",
     ],
-    borderGlow: "#3ddc84",
+    borderGlow: "#10b981",
   },
 ];
 
@@ -119,7 +119,7 @@ export default function LatverianVault() {
               className={`relative flex flex-col justify-between overflow-hidden group transition-all duration-300 ${
                 reward.isGrandPrize
                   ? "shadow-2xl glow-gold md:-translate-y-2"
-                  : "hover:border-[#3ddc84]/45"
+                  : "hover:border-[#10b981]/45"
               }`}
               style={{
                 opacity: 0,
@@ -143,11 +143,11 @@ export default function LatverianVault() {
               <div>
                 <div className="flex items-center justify-between mb-5">
                   <span
-                    className="text-[9px] font-mono px-3 py-1.5 uppercase tracking-wider font-black"
+                    className="text-[9px] font-mono px-3 py-1.5 uppercase tracking-wider font-bold"
                     style={{
-                      background: reward.isGrandPrize ? "#c9a227" : "rgba(61,220,132,0.12)",
-                      color: reward.isGrandPrize ? "#050605" : "#3ddc84",
-                      border: reward.isGrandPrize ? "none" : "1px solid rgba(61,220,132,0.28)",
+                      background: reward.isGrandPrize ? "#c5a059" : "rgba(16,185,129,0.12)",
+                      color: reward.isGrandPrize ? "#050605" : "#a7f3d0",
+                      border: reward.isGrandPrize ? "none" : "1px solid rgba(16,185,129,0.28)",
                     }}
                   >
                     {reward.rank}
@@ -157,9 +157,9 @@ export default function LatverianVault() {
                     style={{ borderColor: "rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)" }}
                   >
                     {reward.isGrandPrize ? (
-                      <Trophy className="w-4 h-4 text-[#c9a227]" />
+                      <Trophy className="w-4 h-4 text-[#dfc17b]" />
                     ) : (
-                      <Award className="w-4 h-4 text-[#3ddc84]" />
+                      <Award className="w-4 h-4 text-[#6ee7b7]" />
                     )}
                   </div>
                 </div>
@@ -168,7 +168,7 @@ export default function LatverianVault() {
                   {reward.title}
                 </h3>
 
-                <p className="text-[9px] font-mono text-[#5a7066] tracking-wider uppercase mb-6">
+                <p className="text-[9px] font-mono text-[#8ca396] tracking-wider uppercase mb-6">
                   {reward.category}
                 </p>
 
@@ -177,7 +177,7 @@ export default function LatverianVault() {
                     <div key={pIdx} className="flex items-start gap-2.5 text-xs text-[#c8ccc9]">
                       <span
                         className="w-1 h-1 mt-1.5 flex-shrink-0"
-                        style={{ background: reward.isGrandPrize ? "#c9a227" : "#3ddc84" }}
+                        style={{ background: reward.isGrandPrize ? "#c5a059" : "#10b981" }}
                       />
                       <span>{perk}</span>
                     </div>

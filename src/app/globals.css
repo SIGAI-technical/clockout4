@@ -1,696 +1,389 @@
-@import "tailwindcss";
-
-@theme {
-  --font-cinzel: var(--font-bebas), var(--font-oswald), serif;
-  --font-bebas: var(--font-bebas), 'Arial Narrow', sans-serif;
-  --font-oswald: var(--font-oswald), sans-serif;
-  --font-sans: var(--font-inter), sans-serif;
-  --color-doom-bg: #050605;
-  --color-doom-surface: #0a0d0b;
-  --color-doom-card: #0d110e;
-  --color-doom-emerald: #10b981;
-  --color-doom-muted: #8ca396;
-  --color-doom-gold: #c5a059;
-  --color-doom-text: #f2f2f0;
-  --color-doom-subtext: #8a9490;
-}
+/* Clockout 4.0: The Doom Takeover */
 
 :root {
-  --background: #050605;
-  --foreground: #f2f2f0;
-  --emerald: #10b981;
-  --emerald-muted: #8ca396;
-  --gold: #c5a059;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html {
-  background-color: #050605;
-  color: #f2f2f0;
+  --ink: #030504;
+  --ink-2: #07100b;
+  --ink-3: #0c1812;
+  --line: rgba(196, 226, 208, 0.14);
+  --line-2: rgba(196, 226, 208, 0.28);
+  --bone: #e8e4d6;          /* narration-box paper */
+  --pale: #cfe3d7;
+  --text: #dfe9e3;
+  --muted: #8fa398;
+  --venom: #46e08f;         /* the one saturated green, used sparingly */
+  --glass: #1f6b45;
+  --gold: #c9a65c;
+  --silver: linear-gradient(180deg, #f6faf8 0%, #b5c2bc 44%, #56635e 52%, #cdd7d2 64%, #8a9893 100%);
+  --ease: cubic-bezier(.2, .7, .1, 1);
+  --gutter: clamp(16px, 4vw, 56px);
   color-scheme: dark;
-  scroll-behavior: smooth;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
+*, *::before, *::after { box-sizing: border-box; }
+html { background: var(--ink); -webkit-text-size-adjust: 100%; scroll-behavior: auto; }
+html.is-locked, html.is-locked body { overflow: hidden; }
 body {
-  background-color: #050605;
-  color: #f2f2f0;
-  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  overflow-x: hidden;
-  min-height: 100vh;
-  font-size: 14px;
+  margin: 0;
+  background: var(--ink);
+  color: var(--text);
+  font-family: var(--f-sans), system-ui, sans-serif;
+  font-variation-settings: "wdth" 100;
+  font-size: 16px;
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
 }
+::selection { background: rgba(70, 224, 143, .3); color: #fff; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+img, video, canvas { display: block; max-width: 100%; }
+:focus-visible { outline: 1px solid var(--venom); outline-offset: 4px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.sr-video { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.skip-link { position: fixed; left: 12px; top: -60px; z-index: 200; background: var(--bone); color: #000; padding: 8px 14px; }
+.skip-link:focus { top: 12px; }
 
-.font-cinzel {
-  font-family: var(--font-bebas), var(--font-oswald), 'Arial Narrow', sans-serif;
-  letter-spacing: 0.06em;
-}
-
-.font-oswald {
-  font-family: var(--font-oswald), sans-serif;
-}
-
-/* ── Section Badge — Sharp angular label with left accent bar (no pills) ── */
-.section-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  padding: 0.38rem 0.9rem 0.38rem 0.75rem;
-  border-left: 2px solid #10b981;
-  background: rgba(16, 185, 129, 0.08);
-  font-family: var(--font-inter), monospace;
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.3em;
+/* ─── Type system ─────────────────────────────────────────────────────────
+   1. Tracked silver small caps (the trailer's "DECEMBER 2026")
+   2. Light expanded display with Cormorant italic emphasis (Doom's voice)
+   3. Narration caption boxes & one dark balloon — the 90s comic accent    */
+.t-track {
+  font-family: var(--f-sans);
+  font-variation-settings: "wdth" 125;
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: .42em;
   text-transform: uppercase;
-  color: #a7f3d0;
-  line-height: 1;
-}
-
-.section-badge-gold {
-  border-left-color: #c5a059;
-  background: rgba(197, 160, 89, 0.08);
-  color: #fde68a;
-}
-
-/* ── Status dot ── */
-.status-dot {
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  background: #10b981;
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.65);
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-/* ── Doom divider ── */
-.doom-divider {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  margin: 1rem 0;
-}
-
-.doom-divider::before,
-.doom-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(to right, transparent, rgba(16, 185, 129, 0.25), transparent);
-}
-
-.doom-divider-text {
-  font-family: var(--font-inter), monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.38em;
-  text-transform: uppercase;
-  color: #71857b;
-  white-space: nowrap;
-}
-
-/* Glows */
-.glow-emerald {
-  box-shadow: 0 0 30px -8px rgba(16, 185, 129, 0.35), 0 0 60px -20px rgba(16, 185, 129, 0.18);
-}
-
-.glow-emerald-lg {
-  box-shadow: 0 0 60px -10px rgba(16, 185, 129, 0.45), 0 0 120px -30px rgba(16, 185, 129, 0.2);
-}
-
-.glow-gold {
-  box-shadow: 0 0 30px -8px rgba(197, 160, 89, 0.35), 0 0 60px -20px rgba(197, 160, 89, 0.15);
-}
-
-.text-glow-emerald {
-  text-shadow: 0 0 20px rgba(16, 185, 129, 0.55), 0 0 50px rgba(16, 185, 129, 0.2);
-}
-
-.text-glow-gold {
-  text-shadow: 0 0 20px rgba(197, 160, 89, 0.5), 0 0 50px rgba(197, 160, 89, 0.18);
-}
-
-/* Glass panel */
-.glass-panel {
-  background: rgba(10, 14, 11, 0.75);
-  backdrop-filter: blur(20px) saturate(1.2);
-  -webkit-backdrop-filter: blur(20px) saturate(1.2);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-}
-
-.glass-panel-hover {
-  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
-}
-
-.glass-panel-hover:hover {
-  border-color: rgba(16, 185, 129, 0.32);
-  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.8), 0 0 40px -15px rgba(16, 185, 129, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  transform: translateY(-3px);
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 4px;
-}
-
-::-webkit-scrollbar-track {
-  background: #050605;
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #1a2b1d, #10b981);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #34d399;
-}
-
-/* Keyframes */
-@keyframes ember-float {
-  0% {
-    transform: translateY(0) translateX(0) scale(1);
-    opacity: 0;
-  }
-
-  10% {
-    opacity: 0.9;
-  }
-
-  90% {
-    opacity: 0.2;
-  }
-
-  100% {
-    transform: translateY(-200px) translateX(var(--drift, 30px)) scale(0.2);
-    opacity: 0;
-  }
-}
-
-@keyframes doom-flicker {
-
-  0%,
-  95%,
-  100% {
-    opacity: 1;
-  }
-
-  96% {
-    opacity: 0.82;
-  }
-
-  97% {
-    opacity: 1;
-  }
-
-  98% {
-    opacity: 0.88;
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% center;
-  }
-
-  100% {
-    background-position: 200% center;
-  }
-}
-
-@keyframes rotate-slow {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes rotate-slow-rev {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(-360deg);
-  }
-}
-
-@keyframes energy-pulse {
-
-  0%,
-  100% {
-    opacity: 0.35;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: 0.7;
-    transform: scale(1.06);
-  }
-}
-
-@keyframes doom-reveal {
-  0% {
-    opacity: 0;
-    transform: scale(0.94) translateY(6px);
-  }
-  65% {
-    opacity: 1;
-    transform: scale(1.01) translateY(0);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-@keyframes doom-pulse-glow {
-  0%,
-  100% {
-    text-shadow: 0 0 20px rgba(16, 185, 129, 0.6), 0 0 45px rgba(16, 185, 129, 0.3), 0 0 75px rgba(197, 160, 89, 0.2);
-    filter: drop-shadow(0 0 16px rgba(16, 185, 129, 0.4));
-  }
-
-  50% {
-    text-shadow: 0 0 35px rgba(16, 185, 129, 0.75), 0 0 65px rgba(16, 185, 129, 0.45), 0 0 100px rgba(197, 160, 89, 0.35);
-    filter: drop-shadow(0 0 24px rgba(16, 185, 129, 0.6));
-  }
-}
-
-@keyframes rise-fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(28px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes ping-slow {
-  0% {
-    transform: scale(1);
-    opacity: 0.7;
-  }
-
-  70% {
-    transform: scale(1.4);
-    opacity: 0;
-  }
-
-  100% {
-    transform: scale(1);
-    opacity: 0;
-  }
-}
-
-@keyframes border-march {
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-@keyframes status-pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.5;
-  }
-}
-
-@keyframes letter-materialize {
-  0% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
-  }
-}
-
-@keyframes sweep-expand {
-  from {
-    transform: scaleX(0);
-  }
-
-  to {
-    transform: scaleX(1);
-  }
-}
-
-@keyframes clockout-ambient-glow {
-  0%,
-  100% {
-    text-shadow: 0 0 30px rgba(16, 185, 129, 0.25), 0 0 60px rgba(16, 185, 129, 0.1);
-  }
-
-  50% {
-    text-shadow: 0 0 45px rgba(16, 185, 129, 0.4), 0 0 90px rgba(16, 185, 129, 0.2), 0 0 140px rgba(197, 160, 89, 0.1);
-  }
-}
-
-@keyframes subtitle-fade-up {
-  0% {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes avengers-glow-pulse {
-  0%,
-  100% {
-    text-shadow: 0 0 18px rgba(16, 185, 129, 0.5), 0 0 35px rgba(16, 185, 129, 0.25), 0 0 60px rgba(197, 160, 89, 0.18);
-  }
-
-  50% {
-    text-shadow: 0 0 30px rgba(16, 185, 129, 0.7), 0 0 55px rgba(16, 185, 129, 0.4), 0 0 90px rgba(197, 160, 89, 0.3);
-  }
-}
-
-/* Utility classes */
-.animate-ember {
-  animation: ember-float var(--dur, 4s) ease-out var(--delay, 0s) infinite;
-}
-
-.animate-doom-flicker {
-  animation: doom-flicker 10s infinite;
-}
-
-.animate-rotate-slow {
-  animation: rotate-slow 25s linear infinite;
-}
-
-.animate-rotate-slow-rev {
-  animation: rotate-slow-rev 18s linear infinite;
-}
-
-.animate-energy-pulse {
-  animation: energy-pulse 3s ease-in-out infinite;
-}
-
-.animate-ping-slow {
-  animation: ping-slow 2.5s ease-out infinite;
-}
-
-.animate-doom-reveal {
-  animation: doom-reveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.animate-rise-fade-in {
-  animation: rise-fade-in 0.5s ease-out forwards;
-}
-
-.animate-status-pulse {
-  animation: status-pulse 2.5s ease-in-out infinite;
-}
-
-.animate-avengers-glow {
-  animation: avengers-glow-pulse 1.5s ease-in-out infinite;
-}
-
-.animate-clockout-glow {
-  animation: clockout-ambient-glow 3s ease-in-out infinite;
-}
-
-.shimmer-text {
-  background: linear-gradient(90deg, #10b981 0%, #a7f3d0 40%, #10b981 60%, #064e3b 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shimmer 3.5s linear infinite;
-}
-
-.shimmer-gold {
-  background: linear-gradient(90deg, #c5a059 0%, #fde68a 40%, #c5a059 60%, #78350f 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shimmer 4s linear infinite;
-}
-
-.vignette {
-  background: radial-gradient(ellipse at center, transparent 25%, rgba(5, 6, 5, 0.55) 65%, rgba(5, 6, 5, 0.95) 100%);
-}
-
-.vignette-heavy {
-  background: radial-gradient(ellipse at center, rgba(5, 6, 5, 0.05) 15%, rgba(5, 6, 5, 0.65) 60%, rgba(5, 6, 5, 0.97) 100%);
-}
-
-/* ─── Avengers-Style Monumental Metallic Title ────────────────────────── */
-
-/* Volumetric emerald backlight behind the title */
-.avengers-backlight {
-  position: absolute;
-  top: 45%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: min(100vw, 920px);
-  height: min(65vh, 520px);
-  background: radial-gradient(ellipse 65% 55% at 50% 50%,
-      rgba(16, 185, 129, 0.22) 0%,
-      rgba(6, 95, 70, 0.14) 40%,
-      rgba(4, 47, 34, 0.05) 65%,
-      transparent 85%);
-  filter: blur(45px);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.avengers-core-glint {
-  position: absolute;
-  top: 45%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: min(85vw, 480px);
-  height: 240px;
-  background: radial-gradient(ellipse at 50% 50%,
-      rgba(255, 255, 255, 0.16) 0%,
-      rgba(16, 185, 129, 0.10) 35%,
-      transparent 70%);
-  filter: blur(28px);
-  pointer-events: none;
-  z-index: 2;
-}
-
-/* ─── Standalone DOOM Trailer Title Reveal ────────────────────────── */
-.doom-hero-title {
-  position: relative;
-  font-family: var(--font-bebas), 'Arial Narrow', sans-serif;
-  /* Occupy approximately 45-65% viewport width on desktop, naturally balanced on mobile */
-  font-size: clamp(3.2rem, 9.5vw, 7.8rem);
-  font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: clamp(0.12em, 0.6vw, 0.22em);
-  text-transform: uppercase;
-  white-space: nowrap;
+  color: #b9c9c0;
   margin: 0;
-  padding: 0;
-  /* Dark gunmetal & brushed steel with subtle emerald reflection */
-  background-image: linear-gradient(
-    180deg,
-    #ffffff 0%,
-    #e1e6e3 14%,
-    #a8b8af 28%,
-    #5f7267 48%,
-    #2c3931 52%,
-    #18221c 68%,
-    #0f1712 85%,
-    #060a08 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  /* Dimensional top edge highlight + steel depth + subtle emerald rim reflection */
-  filter:
-    drop-shadow(0 -1px 1px rgba(255, 255, 255, 0.55))
-    drop-shadow(0 2px 2px #090d0b)
-    drop-shadow(0 6px 16px rgba(0, 0, 0, 0.95))
-    drop-shadow(0 16px 36px rgba(0, 0, 0, 0.92))
-    drop-shadow(0 0 24px rgba(16, 185, 129, 0.22));
 }
+.t-track--wide { font-size: clamp(11px, 1.1vw, 14px); letter-spacing: .62em; background: var(--silver); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
-.doom-pretitle {
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95), 0 0 16px rgba(16, 185, 129, 0.25);
+.h-display {
+  font-family: var(--f-sans);
+  font-variation-settings: "wdth" 112;
+  font-weight: 250;
+  font-size: clamp(30px, 4.4vw, 60px);
+  line-height: 1.04;
+  letter-spacing: -.01em;
+  margin: .5em 0 0;
+  color: #eef4f0;
 }
-
-/* Base title card container */
-.cinematic-title-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  user-select: none;
-  z-index: 10;
+.h-display em {
+  font-family: var(--f-voice), serif;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--pale);
 }
+.lede { max-width: 54ch; color: var(--muted); font-size: 16px; margin: 1.1em 0 0; }
 
-/* Single h1: Heavy, monumental, dark gunmetal superhero film title */
-.cinematic-title {
-  position: relative;
-  font-family: var(--font-oswald), -apple-system, BlinkMacSystemFont, 'Impact', sans-serif;
-  font-size: clamp(2.2rem, 6.2vw, 5.4rem);
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: clamp(0.04em, 0.4vw, 0.08em);
-  text-transform: uppercase;
-  white-space: nowrap;
-  margin: 0;
-  padding: 0;
-  /* Dual-layer background: animated silver/emerald sweep + dark gunmetal gradient */
-  background-image:
-    linear-gradient(115deg,
-      transparent 0%,
-      transparent calc(var(--sweep-pos, -30%) - 14%),
-      rgba(255, 255, 255, calc(0.35 * var(--sweep-opacity, 1))) calc(var(--sweep-pos, -30%) - 5%),
-      rgba(255, 255, 255, calc(0.95 * var(--sweep-opacity, 1))) var(--sweep-pos, -30%),
-      rgba(255, 255, 255, calc(0.35 * var(--sweep-opacity, 1))) calc(var(--sweep-pos, -30%) + 5%),
-      transparent calc(var(--sweep-pos, -30%) + 14%),
-      transparent 100%),
-    linear-gradient(180deg,
-      #ffffff 0%,
-      #e2e8e4 14%,
-      #9cb0a4 32%,
-      #4e6357 48%,
-      #202c25 50%,
-      #334338 53%,
-      #63776b 70%,
-      #28352d 86%,
-      #111713 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  /* Bevel highlights and cinematic shadow on single element */
-  filter:
-    drop-shadow(0 -1px 0 rgba(255, 255, 255, 0.5))
-    drop-shadow(0 2px 0 #121a15)
-    drop-shadow(0 6px 14px rgba(0, 0, 0, 0.95))
-    drop-shadow(0 16px 32px rgba(0, 0, 0, 0.92))
-    drop-shadow(0 0 24px rgba(16, 185, 129, 0.18));
-}
-
-/* 4.0 portion of the title: Brushed Platinum with Sovereign Emerald Luster */
-.title-number {
+/* narration caption — aged paper box, inked text, offset green shadow */
+.caption {
   display: inline-block;
-  margin-left: clamp(0.25rem, 0.8vw, 0.75rem);
-  background-image:
-    linear-gradient(180deg,
-      #ffffff 0%,
-      #d1fae5 18%,
-      #10b981 48%,
-      #047857 75%,
-      #022c22 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 16px rgba(16, 185, 129, 0.45));
+  margin: 0;
+  padding: 9px 14px 8px;
+  background: var(--bone);
+  color: #101511;
+  font-family: var(--f-sans);
+  font-variation-settings: "wdth" 80;
+  font-weight: 650;
+  font-style: italic;
+  font-size: clamp(12px, 1.05vw, 14px);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  line-height: 1.35;
+  border: 1.5px solid #0a0d0b;
+  box-shadow: 4px 4px 0 rgba(31, 107, 69, .9);
+  max-width: 34ch;
 }
 
-/* Anamorphic light flare that tracks across the title and smoothly dissolves */
-.title-sweep-flare {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  height: 2px;
-  width: clamp(80px, 16vw, 180px);
-  transform: translate(-50%, -50%);
-  background: linear-gradient(90deg,
-      transparent 0%,
-      rgba(167, 243, 208, 0.35) 20%,
-      rgba(255, 255, 255, 0.95) 50%,
-      rgba(167, 243, 208, 0.35) 80%,
-      transparent 100%);
-  box-shadow:
-    0 0 10px rgba(255, 255, 255, 0.9),
-    0 0 20px rgba(52, 211, 153, 0.45),
-    0 0 40px rgba(16, 185, 129, 0.25);
-  mix-blend-mode: screen;
-  pointer-events: none;
-  z-index: 25;
-  transition: opacity 0.08s linear;
-}
-
-/* Tagline: THE DOOM TAKEOVER */
-.cinematic-tagline {
-  font-family: var(--font-oswald), sans-serif;
-  font-size: clamp(0.7rem, 1.6vw, 1.15rem);
+/* Doom's balloon: dark, double-ruled, serif lettering, tail */
+.balloon {
+  position: relative;
+  margin: 0;
+  padding: 18px 26px;
+  max-width: 30ch;
+  background: radial-gradient(120% 140% at 30% 20%, #0f2219, #050a07);
+  border: 1px solid rgba(120, 240, 170, .55);
+  outline: 1px solid rgba(120, 240, 170, .18);
+  outline-offset: 4px;
+  border-radius: 46% 54% 50% 50% / 58% 52% 48% 42%;
+  font-family: var(--f-voice), serif;
+  font-style: italic;
   font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: clamp(0.28em, 0.9vw, 0.52em);
-  text-transform: uppercase;
-  color: #b0c2b7;
-  text-shadow:
-    0 0 18px rgba(16, 185, 129, 0.4),
-    0 2px 8px rgba(0, 0, 0, 0.95);
-  margin-top: clamp(0.6rem, 1.2vw, 1rem);
-  margin-bottom: 0;
+  font-size: clamp(19px, 2vw, 28px);
+  line-height: 1.22;
+  color: #e9f6ee;
+  text-align: center;
+  box-shadow: 0 0 60px rgba(70, 224, 143, .12);
 }
-
-/* Floating micro-particles */
-.metal-particle {
+.balloon::after {
+  content: "";
   position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  background: rgba(61, 220, 132, 0.65);
-  box-shadow: 0 0 8px rgba(61, 220, 132, 0.8);
-  animation: float-particle var(--dur, 6s) ease-in-out infinite var(--delay, 0s);
+  left: 22%;
+  bottom: -18px;
+  width: 26px; height: 22px;
+  background: #060c08;
+  border-right: 1px solid rgba(120, 240, 170, .55);
+  transform: skewX(-32deg);
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
 }
 
-@keyframes float-particle {
-  0% {
-    transform: translateY(0) translateX(0) scale(1);
-    opacity: 0;
-  }
+/* ─── Buttons ─────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .6em;
+  min-height: 46px; padding: 0 26px;
+  font-variation-settings: "wdth" 125; font-weight: 600; font-size: 11px; letter-spacing: .36em; text-transform: uppercase;
+  cursor: pointer; border: 0; background: none; text-decoration: none;
+  transition: transform .4s var(--ease), box-shadow .4s var(--ease), background .3s, color .3s;
+}
+.btn--metal {
+  color: #07120c;
+  background: var(--silver);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.35) inset, 0 10px 40px rgba(70, 224, 143, .18);
+  clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+}
+.btn--metal:hover { transform: translateY(-2px); box-shadow: 0 0 0 1px #fff inset, 0 14px 50px rgba(70, 224, 143, .35); }
+.btn--line { color: var(--text); border: 1px solid var(--line-2); min-height: 40px; padding: 0 18px; }
+.btn--line:hover { border-color: var(--venom); color: #fff; }
 
-  20% {
-    opacity: 0.8;
-  }
+/* ─── Overture ────────────────────────────────────────────────────────── */
+.overture { position: fixed; inset: 0; z-index: 100; background: #020302; }
+.overture__cv { position: absolute; inset: 0; width: 100%; height: 100%; }
+.overture__skip { position: absolute; right: var(--gutter); bottom: 28px; background: none; border: 0; cursor: pointer; opacity: .55; padding: 10px; }
+.overture__skip:hover { opacity: 1; }
+.overture__sub {
+  position: absolute; left: 0; right: 0; top: calc(50% + min(15.5vw, 27.5vh) + 22px);
+  display: flex; flex-direction: column; align-items: center; gap: 12px; pointer-events: none; text-align: center; padding: 0 var(--gutter);
+}
+.overture__ed { font-family: var(--f-voice); font-style: italic; font-size: clamp(22px, 2.2vw, 32px); color: var(--pale); }
+@media (max-aspect-ratio: 1/1) { .overture__sub { top: calc(50% + 22vw + 18px); } }
 
-  80% {
-    opacity: 0.3;
-  }
+.gate { position: absolute; inset: 0; display: grid; place-items: center; padding-top: 12vh; text-align: center; overflow: hidden; background: #000; }
+.doom { position: absolute; inset: 0; background: #000; overflow: hidden; }
+.doom__img {
+  position: absolute; inset: -2%; background: #000 url(/sigai/hood.jpg) center 42% / cover no-repeat;
+  transform-origin: 50% 30%; animation: doomBreath 5.2s cubic-bezier(.45,0,.55,1) infinite;
+}
+/* inhale (0–33%): the cloak rises a touch; hold; exhale (38–78%): settles */
+@keyframes doomBreath {
+  0% { transform: scale(1.02) translateY(0); }
+  33%, 38% { transform: scale(1.035) translateY(-.5%); }
+  78%, 100% { transform: scale(1.02) translateY(0); }
+}
+.doom__rim {
+  position: absolute; inset: 0; mix-blend-mode: screen;
+  background: radial-gradient(38% 46% at 50% 28%, rgba(60,200,120,.13), transparent 70%);
+  animation: doomRim 5.2s ease-in-out infinite;
+}
+@keyframes doomRim { 0%, 100% { opacity: .5; } 33% { opacity: 1; } }
+.doom__veil { position: absolute; inset: 0; background: radial-gradient(70% 70% at 50% 45%, transparent 55%, rgba(0,0,0,.7)); }
+@media (max-width: 760px) { .doom__img { background: #000 url(/sigai/hood_m.jpg) 50% 30% / auto 78% no-repeat; } }
+.gate__inner { position: relative; animation: rise 1.6s .2s var(--ease) both; display: flex; flex-direction: column; align-items: center; padding: 0 var(--gutter); max-width: 820px; }
+.gate__mark {
+  width: 46px; aspect-ratio: 395 / 512; margin-bottom: 26px;
+  background: linear-gradient(180deg, #fff 0%, #c9d2ce 45%, #6c7873 52%, #e2e9e5 62%, #96a19c 100%);
+  -webkit-mask: url(/sigai/mark-mask.png) center / contain no-repeat; mask: url(/sigai/mark-mask.png) center / contain no-repeat;
+  filter: drop-shadow(0 0 22px rgba(70,224,143,.35));
+}
+.gate__title {
+  margin: 20px 0 14px; font-family: var(--f-voice); font-weight: 500; color: var(--bone);
+  font-size: clamp(42px, 6vw, 84px); line-height: .98; color: #eef5f1; letter-spacing: -.01em;
+}
+.gate__title em { font-style: italic; color: #bff5d6; }
+.gate__lede { margin: 0 0 38px; color: rgba(225,236,229,.72); font-size: clamp(15px, 1.25vw, 17px); line-height: 1.6; max-width: 46ch; }
+.gate__enter {
+  position: relative; overflow: hidden; min-width: 220px; padding: 17px 34px; border-radius: 999px;
+  border: 1px solid rgba(160,240,195,.28); background: rgba(6,24,15,.55); backdrop-filter: blur(6px);
+  color: #eef5f1; font-family: var(--f-sans); font-stretch: 125%; font-size: 12px; font-weight: 600;
+  letter-spacing: .32em; text-transform: uppercase; cursor: progress;
+  transition: border-color .5s, box-shadow .6s var(--ease), transform .5s var(--ease), background .5s;
+}
+.gate__fill {
+  position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--p, 0) * 100%);
+  background: linear-gradient(90deg, rgba(70,224,143,.05), rgba(70,224,143,.18)); transition: width .3s;
+}
+.gate__label { position: relative; padding-left: .32em; }
+.gate__enter.is-ready { cursor: pointer; border-color: rgba(160,240,195,.6); background: linear-gradient(180deg, #13583a, #08301e); box-shadow: 0 0 0 1px rgba(0,0,0,.4) inset, 0 10px 40px rgba(20,120,70,.35); }
+.gate__enter.is-ready .gate__fill { opacity: 0; }
+.gate__enter.is-ready:hover { transform: translateY(-2px); box-shadow: 0 0 0 1px rgba(0,0,0,.4) inset, 0 16px 60px rgba(70,224,143,.4); }
+.gate__note { margin: 22px 0 0; display: inline-flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); letter-spacing: .06em; }
+.gate__note i { width: 6px; height: 6px; border-radius: 50%; background: var(--venom); box-shadow: 0 0 12px var(--venom); animation: pulse 2.4s ease-in-out infinite; }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+@keyframes pulse { 50% { opacity: .35; } }
 
-  100% {
-    transform: translateY(-90px) translateX(var(--drift, 20px)) scale(0.3);
-    opacity: 0;
-  }
+
+/* ─── Sound toggle ───────────────────────────────────────────────────── */
+.sound { display: flex; align-items: center; gap: 3px; width: 40px; height: 40px; justify-content: center; background: none; border: 1px solid var(--line); cursor: pointer; }
+.sound i { width: 2px; height: 14px; background: var(--pale); transform-origin: bottom; animation: eq 1s ease-in-out infinite; }
+.sound i:nth-child(2) { animation-delay: -.3s; } .sound i:nth-child(3) { animation-delay: -.6s; } .sound i:nth-child(4) { animation-delay: -.8s; }
+.sound.is-muted i { animation: none; transform: scaleY(.18); }
+@keyframes eq { 50% { transform: scaleY(.3); } }
+
+/* ─── FAQ ─────────────────────────────────────────────────────────────── */
+.faq__item { border-bottom: 1px solid var(--line); }
+.faq__item h3 { margin: 0; }
+.faq__item button {
+  width: 100%; display: grid; grid-template-columns: 48px 1fr 20px; gap: 16px; align-items: center; text-align: left;
+  padding: 24px 0; background: none; border: 0; cursor: pointer;
+  font-variation-settings: "wdth" 108; font-weight: 350; font-size: clamp(17px, 1.7vw, 22px); color: #e9f1ec;
+}
+.faq__n { font-family: var(--f-voice); font-style: italic; font-size: 20px; color: var(--muted); }
+.faq__item button i { width: 12px; height: 12px; position: relative; justify-self: end; }
+.faq__item button i::before, .faq__item button i::after { content: ""; position: absolute; left: 0; top: 50%; width: 12px; height: 1px; background: var(--pale); transition: transform .4s var(--ease); }
+.faq__item button i::after { transform: rotate(90deg); }
+.faq__item.is-open button i::after { transform: rotate(0); }
+.faq__item.is-open .faq__n { color: var(--venom); }
+.faq__a p { margin: 0 0 26px 64px; max-width: 64ch; color: var(--muted); }
+
+.grain { position: fixed; inset: -50%; z-index: 90; pointer-events: none; opacity: .05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 1s steps(6) infinite; }
+@keyframes grain { 0% { transform: translate(0,0); } 33% { transform: translate(-3%,2%); } 66% { transform: translate(2%,-3%); } 100% { transform: translate(0,0); } }
+
+/* ─── Top bar ─────────────────────────────────────────────────────────── */
+.topbar {
+  position: fixed; inset: 0 0 auto 0; z-index: 60; display: flex; align-items: center; justify-content: space-between;
+  padding: 14px var(--gutter); pointer-events: none; opacity: 0; transform: translateY(-8px);
+  transition: opacity .8s var(--ease), transform .8s var(--ease);
+  background: linear-gradient(180deg, rgba(2,4,3,.75), transparent);
+}
+.topbar.is-on { opacity: 1; transform: none; pointer-events: auto; }
+.topbar__mark { display: inline-flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; font-family: var(--f-logo); font-size: 19px; letter-spacing: .04em; text-transform: uppercase; }
+.topbar__mark em { font-family: var(--f-voice); font-style: italic; text-transform: none; font-size: 17px; color: var(--pale); }
+.topbar__logo { width: 22px; aspect-ratio: 395 / 512; background: linear-gradient(180deg, #fff, #9aa7a1); -webkit-mask: url(/sigai/mark-mask.png) center / contain no-repeat; mask: url(/sigai/mark-mask.png) center / contain no-repeat; }
+.topbar__right { display: flex; align-items: center; gap: 10px; }
+.topbar__cta {
+  height: 40px; padding: 0 20px; border: 1px solid rgba(160,240,195,.5); background: linear-gradient(180deg, #13583a, #08301e); color: #eef5f1; cursor: pointer;
+  font-family: var(--f-sans); font-stretch: 125%; font-size: 11px; font-weight: 600; letter-spacing: .28em; text-transform: uppercase;
+  transition: box-shadow .4s var(--ease), transform .4s var(--ease);
+}
+.topbar__cta:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(70,224,143,.3); }
+
+/* ─── The saga stage ──────────────────────────────────────────────────── */
+.saga { position: relative; height: 1900vh; background: #000; }
+.saga__stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+.saga__bg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+/* Doom's lettering: Roman capitals cut in dark iron, lit along the top edge, an emerald seam beneath */
+.decree-type {
+  font-family: var(--f-decree), serif; font-weight: 900; text-transform: uppercase; letter-spacing: .06em;
+  background: linear-gradient(180deg, #f4f7f5 0%, #c3ccc7 30%, #5d6863 48%, #9aa59f 52%, #2c3531 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(70,224,143,.55)) drop-shadow(0 6px 24px rgba(0,0,0,.9));
+}
+.saga__kicker {
+  margin: 0; font-family: var(--f-decree), serif; font-weight: 700; font-size: clamp(10px, .9vw, 12px);
+  letter-spacing: .42em; text-transform: uppercase; color: var(--venom);
 }
 
-/* Mobile */
-@media (max-width: 640px) {
-  .text-hero-sm {
-    font-size: clamp(2.2rem, 11vw, 4rem);
-  }
+.saga__title { position: absolute; left: 0; right: 0; top: 12vh; text-align: center; padding: 0 var(--gutter); pointer-events: none; z-index: 4; }
+.saga__name { margin: 16px 0 10px; font-size: clamp(46px, 8vw, 118px); line-height: .92; }
+.saga__name span { font-weight: 500; font-size: .45em; letter-spacing: .1em; vertical-align: .55em; }
+.saga__tag { margin: 0; font-family: var(--f-decree), serif; font-weight: 500; font-size: clamp(13px, 1.3vw, 18px); letter-spacing: .6em; text-transform: uppercase; color: #a9b7b0; }
+.saga__voice { margin: 26px auto 0; max-width: 30ch; font-family: var(--f-voice); font-style: italic; font-size: clamp(22px, 2.2vw, 32px); color: var(--pale); text-shadow: 0 2px 22px #000; }
+.saga__hint { position: absolute; left: 50%; bottom: 5vh; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 12px; z-index: 5; pointer-events: none;
+  font-family: var(--f-decree), serif; font-size: 11px; letter-spacing: .5em; text-transform: uppercase; color: var(--muted); }
+.saga__hint i { width: 1px; height: 46px; background: linear-gradient(180deg, var(--venom), transparent); animation: hint 2s ease-in-out infinite; }
+@keyframes hint { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+
+/* title cards: Doom's lines, cut into the frame like a film's */
+.card { position: absolute; z-index: 4; pointer-events: none; max-width: min(560px, 42vw); transform-origin: 0 50%; }
+.card strong { display: block; margin: 14px 0 16px; font-size: clamp(44px, 6vw, 96px); line-height: .92; }
+.card em { display: block; font-family: var(--f-voice); font-size: clamp(20px, 1.9vw, 28px); color: var(--pale); text-shadow: 0 2px 18px #000; }
+.card--l { left: calc(var(--gutter) + 2vw); top: 50%; translate: 0 -50%; }
+.card--r { right: calc(var(--gutter) + 2vw); top: 50%; translate: 0 -50%; text-align: right; transform-origin: 100% 50%; }
+.card--top, .card--c { left: 50%; top: 15vh; translate: -50% 0; text-align: center; max-width: min(900px, 90vw); transform-origin: 50% 0; }
+.card--c { top: 50%; translate: -50% -50%; }
+@media (max-aspect-ratio: 9/10) {
+  .card--l, .card--r { left: var(--gutter); right: var(--gutter); top: auto; bottom: 16vh; translate: none; max-width: none; text-align: left; }
+  .card strong { font-size: clamp(36px, 11vw, 60px); }
 }
 
-::selection {
-  background: rgba(16, 185, 129, 0.25);
-  color: #a7f3d0;
+/* the dark of the first shot: one pool of light, where the viewer holds it */
+.saga__dark { position: absolute; inset: 0; z-index: 3; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle at var(--lx, 50%) var(--ly, 30%), transparent 0, transparent 6vmax, rgba(0,0,0,.6) 20vmax, #000 42vmax); }
+
+/* letterbox */
+.saga__bars { position: absolute; inset: 0; z-index: 6; pointer-events: none; --bar: 1; }
+.saga__bars::before, .saga__bars::after { content: ""; position: absolute; left: 0; right: 0; height: calc(9vh * var(--bar)); background: #000; }
+.saga__bars::before { top: 0; } .saga__bars::after { bottom: 0; }
+
+/* ─── Doom's decrees: iron plaques ────────────────────────────────────── */
+.saga__decrees { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
+.plaque {
+  position: absolute; top: 50%; translate: 0 -50%; width: min(440px, 36vw); padding: 44px 34px 34px; text-align: center;
+  background:
+    radial-gradient(120% 70% at 50% 0, rgba(70,224,143,.08), transparent 60%),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.012) 0 2px, transparent 2px 5px),
+    linear-gradient(180deg, #1a201d, #0b0f0d 60%, #070a08);
+  border: 1px solid #2f3a35; outline: 1px solid rgba(70,224,143,.22); outline-offset: -8px;
+  box-shadow: 0 0 0 1px #000, 0 30px 80px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.08);
+}
+/* rivets */
+.plaque::before, .plaque::after { content: ""; position: absolute; top: 16px; width: 7px; height: 7px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #9aa59f, #2a322e 70%); box-shadow: 0 1px 1px #000; }
+.plaque--l { left: calc(var(--gutter) + 2vw); } .plaque--r { right: calc(var(--gutter) + 2vw); }
+@media (max-aspect-ratio: 9/10) { .plaque { left: var(--gutter); right: var(--gutter); width: auto; top: auto; bottom: 12vh; translate: none; } }
+.plaque::before { left: 16px; } .plaque::after { right: 16px; }
+.plaque__seal {
+  position: absolute; left: 50%; top: -26px; translate: -50% 0; width: 52px; height: 52px; display: grid; place-items: center;
+  border-radius: 50%; background: radial-gradient(circle at 40% 35%, #2d8a5a, #0b3a22 70%); border: 2px solid #0a2416;
+  box-shadow: 0 0 0 3px rgba(70,224,143,.25), 0 6px 18px #000; color: #e6f5ec; font-family: var(--f-decree), serif; font-weight: 900; font-size: 16px; letter-spacing: .04em;
+}
+.plaque__title { margin: 16px 0 12px; font-size: clamp(24px, 2.4vw, 36px); line-height: 1.04; }
+.plaque__voice { margin: 0 0 18px; font-family: var(--f-voice); font-style: italic; font-size: 19px; color: var(--pale); }
+.plaque ul { list-style: none; margin: 0; padding: 14px 0 0; display: grid; gap: 8px; font-size: 14px; line-height: 1.5; color: rgba(225,236,229,.8); border-top: 1px solid rgba(196,226,208,.12); }
+
+/* ─── The clash ───────────────────────────────────────────────────────── */
+.bolt { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 7; pointer-events: none; mix-blend-mode: screen; }
+.saga__flash { position: absolute; inset: 0; z-index: 8; pointer-events: none; opacity: 0; background: radial-gradient(circle at 50% 50%, #fff, #d9ffe9 40%, rgba(120,255,180,.6)); }
+
+/* ─── The roll (registration) ─────────────────────────────────────────── */
+.roll {
+  position: absolute; left: 50%; top: 50%; z-index: 9; width: min(640px, 92vw); max-height: 88vh;
+  display: flex; flex-direction: column; align-items: center; padding: 26px clamp(16px, 3vw, 30px) 18px; text-align: center;
+  background: radial-gradient(120% 80% at 50% 0, rgba(18,60,38,.96), rgba(3,9,6,.97) 70%);
+  border: 1px solid rgba(160,240,195,.35); box-shadow: 0 0 0 1px rgba(0,0,0,.6) inset, 0 0 120px rgba(70,224,143,.25), 0 40px 120px #000;
+}
+.roll__title { margin: 12px 0 6px; font-size: clamp(30px, 3.6vw, 46px); }
+.roll__voice { margin: 0 0 16px; font-family: var(--f-voice); font-style: italic; font-size: 19px; color: var(--pale); }
+.roll__frame { width: 100%; height: min(62vh, 640px); background: #f5f7f6; border-radius: 2px; overflow: hidden; }
+.roll__frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+.roll__placeholder { height: 100%; display: grid; place-content: center; gap: 10px; padding: 24px; color: #24332b; background: repeating-linear-gradient(45deg, #eef2f0 0 14px, #e6ebe8 14px 28px); }
+.roll__placeholder strong { font-family: var(--f-logo); font-weight: 400; font-size: 26px; text-transform: uppercase; letter-spacing: .04em; }
+.roll__placeholder span { font-size: 14px; max-width: 34ch; }
+.roll__placeholder code { font-size: 13px; background: rgba(0,0,0,.06); padding: 1px 5px; }
+.roll__note { margin: 12px 0 0; font-size: 12px; color: var(--muted); letter-spacing: .05em; }
+
+/* ─── After the smoke ─────────────────────────────────────────────────── */
+.after { position: relative; background: radial-gradient(80% 50% at 50% 0, #0b1d14, #030504 70%); padding: clamp(80px, 12vh, 140px) var(--gutter) 0; }
+.after__inner { max-width: 980px; margin: 0 auto; }
+.after .t-track { color: var(--venom); }
+.after__title { margin: 12px 0 34px; font-size: clamp(32px, 4.4vw, 58px); line-height: 1; }
+.faq { border-top: 1px solid var(--line); }
+.contacts { margin: 70px 0 0; }
+.contacts ul { list-style: none; margin: 16px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.contacts li { display: grid; gap: 6px; padding: 20px 22px; background: #050a07; }
+.contacts strong { font-weight: 600; }
+.contacts a { color: var(--pale); text-decoration: none; font-variant-numeric: tabular-nums; }
+.contacts a:hover { color: var(--venom); }
+.foot { max-width: 980px; margin: 90px auto 0; padding: 28px 0 40px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: space-between; align-items: center; }
+.foot__fine { font-size: 12px; color: #5f7268; max-width: 60ch; }
+
+/* ─── Narrow screens ──────────────────────────────────────────────────── */
+@media (max-width: 760px) {
+  .plaque { width: 88vw; top: 9vh; padding: 38px 22px 26px; }
+  .plaque ul { font-size: 13px; }
+  .saga__group { left: var(--gutter); right: var(--gutter); top: 11vh; translate: none; max-width: none; text-align: center; }
+  .saga__group::before { margin: 0 auto 14px; }
+  .saga__title { top: 10vh; }
+  .faq__item button { grid-template-columns: 34px 1fr 16px; }
+  .faq__a p { margin-left: 50px; }
+  .topbar__mark { font-size: 16px; }
+  .topbar__cta { padding: 0 14px; letter-spacing: .2em; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .grain, .doom__img, .doom__rim, .gate__note i, .saga__hint i, .sound i { animation: none; }
 }

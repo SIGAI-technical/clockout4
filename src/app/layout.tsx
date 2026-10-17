@@ -1,80 +1,45 @@
 import type { Metadata, Viewport } from "next";
-import { Bebas_Neue, Inter, Oswald } from "next/font/google";
+import { Anton, Archivo, Cinzel, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 
-const bebasNeue = Bebas_Neue({
-  variable: "--font-bebas",
+const anton = Anton({ variable: "--f-logo", subsets: ["latin"], weight: "400", display: "swap" });
+const archivo = Archivo({ variable: "--f-sans", subsets: ["latin"], axes: ["wdth"], display: "swap" });
+// Doom's voice in stone and iron: Roman inscriptional capitals
+const cinzel = Cinzel({ variable: "--f-decree", subsets: ["latin"], weight: ["500", "700", "900"], display: "swap" });
+const cormorant = Cormorant_Garamond({
+  variable: "--f-voice",
   subsets: ["latin"],
-  weight: ["400"],
-  display: "swap",
-});
-
-const oswald = Oswald({
-  variable: "--font-oswald",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["500", "600"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://clockout4.aiml.latveria"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: "Clockout 4.0 — The Doom Takeover",
   description:
-    "An interactive cinematic experience for Clockout 4.0. Enter Latveria's sovereign stronghold, stand before Doctor Doom's throne, and secure your access.",
-  keywords: [
-    "Clockout 4.0",
-    "Doom Takeover",
-    "AIML Department",
-    "Latveria",
-    "Tech Conclave",
-    "Hackathon",
-  ],
-  authors: [{ name: "AIML Department" }],
+    "Doom has declared war on the fourth floor. Avengers, Fantastic Four, X-Men and Shang-Chi stand against him. Clockout 4.0 by SIGAI, AIML Department.",
   openGraph: {
     title: "Clockout 4.0 — The Doom Takeover",
-    description:
-      "Enter the fortress. Face the ruler. Clockout 4.0 begins at 2:00 PM onwards, 4th Floor, AIML Department.",
-    images: [
-      {
-        url: "/images/v3_freeze_frame.jpg",
-        width: 1920,
-        height: 808,
-        alt: "Doctor Doom on the Throne - Clockout 4.0",
-      },
-    ],
+    description: "Doom has declared war. Choose your side.",
+    images: [{ url: "/cine/throne.jpg", width: 1280, height: 536, alt: "The throne of Doom" }],
   },
+  twitter: { card: "summary_large_image", images: ["/cine/throne.jpg"] },
 };
 
-export const viewport: Viewport = {
-  themeColor: "#050605",
-  width: "device-width",
-  initialScale: 1,
-};
+export const viewport: Viewport = { themeColor: "#030504", width: "device-width", initialScale: 1 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${bebasNeue.variable} ${oswald.variable} ${inter.variable} dark`}>
+    <html lang="en" className={`${anton.variable} ${archivo.variable} ${cinzel.variable} ${cormorant.variable}`}>
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; } window.scrollTo(0, 0);`,
+            __html: `if('scrollRestoration' in history)history.scrollRestoration='manual';`,
           }}
         />
       </head>
-      <body className="bg-[#050605] text-[#F7F7F6] antialiased selection:bg-[#39D98A]/30 selection:text-[#39D98A] overflow-x-hidden min-h-screen">
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

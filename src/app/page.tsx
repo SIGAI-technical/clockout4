@@ -1,85 +1,45 @@
 "use client";
 
-import React, { useState, useCallback, useRef } from "react";
-import Navbar from "@/components/Navbar";
-import BackgroundThrone from "@/components/BackgroundThrone";
-import CinematicScroll, { CinematicScrollHandle } from "@/components/CinematicScroll";
-import RegisterModal from "@/components/RegisterModal";
-import Footer from "@/components/Footer";
-import { EVENT_CONFIG } from "@/config/event";
+import { useCallback, useEffect, useState } from "react";
+import Overture from "@/components/cine/Overture";
+import Saga, { FORM_AT } from "@/components/battle/Saga";
+import { Aftermath, TopBar } from "@/components/battle/Aftermath";
+import { setSfxMuted } from "@/lib/sfx";
 
 export default function Home() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [cinematicCompleted, setCinematicCompleted] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const cinematicRef = useRef<CinematicScrollHandle>(null);
+  const [entered, setEntered] = useState(false);
+  const [muted, setMuted] = useState(false);
 
-  const handleRegisterClick = useCallback(() => {
-    const url = EVENT_CONFIG.googleFormUrl;
-    if (
-      url &&
-      (url.startsWith("http://") || url.startsWith("https://")) &&
-      !url.includes("example.com")
-    ) {
-      window.open(url, "_blank", "noopener,noreferrer");
-    } else {
-      setIsModalOpen(true);
-    }
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      try { if (localStorage.getItem("co4-muted") === "1") setMuted(true); } catch { /* ignore */ }
+    });
+    return () => cancelAnimationFrame(id);
   }, []);
+  useEffect(() => {
+    setSfxMuted(muted);
+    try { localStorage.setItem("co4-muted", muted ? "1" : "0"); } catch { /* ignore */ }
+  }, [muted]);
 
-  const handleCinematicComplete = useCallback((completed: boolean) => {
-    setCinematicCompleted((prev) => (prev !== completed ? completed : prev));
-  }, []);
-
-  const handleSkipIntro = useCallback(() => {
-    if (cinematicRef.current) {
-      cinematicRef.current.skipIntro();
-    }
-  }, []);
-
-  const handleReplayIntro = useCallback(() => {
-    if (cinematicRef.current) {
-      cinematicRef.current.replayIntro();
-    }
-  }, []);
-
-  const handleToggleMute = useCallback(() => {
-    setIsMuted((prev) => !prev);
+  const onDone = useCallback(() => { window.scrollTo(0, 0); setEntered(true); }, []);
+  // "Register" jumps straight to the moment the form is open
+  const register = useCallback(() => {
+    const el = document.getElementById("saga");
+    if (!el) return;
+    const top = el.offsetTop + (el.offsetHeight - innerHeight) * FORM_AT;
+    window.scrollTo({ top, behavior: "smooth" });
   }, []);
 
   return (
-    <main className="relative min-h-screen w-full bg-[#000000] text-[#F7F7F6] overflow-x-hidden">
-      {/* Permanent Background Throne (Doctor Doom Frozen Final Frame) */}
-      <BackgroundThrone opacity={cinematicCompleted ? 1 : 0} dimLevel={0.4} />
-
-      {/* Global Navbar with unified controls */}
-      <Navbar
-        onRegisterClick={handleRegisterClick}
-        onSkipIntro={handleSkipIntro}
-        onReplayIntro={handleReplayIntro}
-        showSkipIntro={!cinematicCompleted}
-        showReplayButton={cinematicCompleted}
-        reachedRegistration={cinematicCompleted}
-        isMuted={isMuted}
-        onToggleMute={handleToggleMute}
-      />
-
-      {/* Primary Cinematic Sequence (Videos 1, 2, 3 + Transitions 1, 2 + Throne Reveal + Event Details) */}
-      <CinematicScroll
-        ref={cinematicRef}
-        onRegisterClick={handleRegisterClick}
-        onCinematicComplete={handleCinematicComplete}
-        isMuted={isMuted}
-      />
-
-      {/* Minimalist Footer */}
-      <Footer />
-
-      {/* Google Form Status / Action Modal */}
-      <RegisterModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
-    </main>
+    <>
+      <a href="#faq" className="skip-link">Skip to questions</a>
+      <TopBar visible={entered} muted={muted} onMute={() => setMuted((m) => !m)} onRegister={register} />
+      <main>
+        <Saga />
+        <Aftermath />
+      </main>
+      <Overture onDone={onDone} />
+      <div className="grain" aria-hidden="true" />
+    </>
   );
 }

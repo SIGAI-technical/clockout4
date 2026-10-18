@@ -1,52 +1,83 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { EVENT } from "@/config/event";
 import { drumHit } from "@/lib/identScore";
-import { fetchTally, type Side, type Tally } from "@/lib/side";
-import Sigil from "../takeover/Sigil";
+import { cue, setBed } from "@/lib/score";
 
 /* ── Castle Doom ───────────────────────────────────────────────────────────────────────────────────
    One pinned stage; the scroll is the camera. Up the bridge to the gate (the event's name carved over
    it) and through it; down the great hall, past the banners that carry the day, the hour and the
-   ground; into the throne room, where Doom asks his one question.                              */
+   ground; into the throne room, where he is waiting.                                           */
 type Leg = { id: string; clip: string; a: number; b: number };
 export const LEGS: Leg[] = [
-  { id: "gate", clip: "gate", a: 0, b: 0.32 },
-  { id: "hall", clip: "hall", a: 0.32, b: 0.62 },
-  { id: "throne", clip: "throne", a: 0.62, b: 0.86 },
+  { id: "gate", clip: "gate", a: 0, b: 0.34 },
+  { id: "hall", clip: "hall", a: 0.34, b: 0.66 },
+  { id: "throne", clip: "throne", a: 0.66, b: 0.94 },
 ];
-export const CHOICE_AT = 0.86;   // the throne clip holds its last frame from here; the question is asked
+export const THRONE_AT = 0.7;
+// where the story's sounds fall along the way: lightning over the gate, the doors giving way
+const THUNDER_AT = 0.06, DOORS_AT = 0.22;
 
 const BANNERS = [
-  { k: "The day", v: EVENT.date, sub: "By order of Victor von Doom" },
+  { k: "The day", v: EVENT.date, sub: "" },
   { k: "The hour", v: EVENT.time, sub: `Report by ${EVENT.reporting}` },
-  { k: "The ground", v: EVENT.venue, sub: "Under Latverian rule" },
+  { k: "The ground", v: EVENT.venue, sub: "" },
 ];
-const BANNER_AT = (i: number) => 0.335 + i * 0.088;
+const BANNER_AT = (i: number) => 0.355 + i * 0.09;
 const THRONE_LINES: [number, number, string][] = [
-  [0.68, 0.78, "You have come a long way to stand before Doom."],
-  [0.76, 0.86, "Few are given a choice."],
+  [0.76, 0.88, "Few are summoned."],
+  [0.87, 0.985, "You have been."],
 ];
 
 const cl = (x: number) => Math.min(1, Math.max(0, x));
 const sm = (x: number) => { x = cl(x); return x * x * (3 - 2 * x); };
 const win = (p: number, a: number, b: number, f = 0.02) => sm((p - a) / f) * (1 - sm((p - b + f) / f));
 
-export default function Castle({ side, onChoose }: { side: Side | null; onChoose: (s: Side) => void }) {
+export default function Castle() {
   const root = useRef<HTMLElement>(null);
   const vids = useRef<(HTMLVideoElement | null)[]>([]);
   const titleRef = useRef<HTMLDivElement>(null);
   const banners = useRef<(HTMLDivElement | null)[]>([]);
   const lines = useRef<(HTMLParagraphElement | null)[]>([]);
-  const choiceRef = useRef<HTMLDivElement>(null);
-  const [tally, setTally] = useState<Tally | null>(null);
+  const blackRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { fetchTally().then(setTally); }, []);
+  /* Loading the footage: phones get portrait-cropped 720p cuts (a third of the weight). Each clip is
+     downloaded whole, in the order they're seen, and played from memory — a scrubbed video never
+     "plays", so browsers (mobile Chrome especially) stop streaming it and seeks stall. Until a clip
+     is in, its poster stands in. The first tap also primes the videos, for iOS. */
+  useEffect(() => {
+    const phone = matchMedia("(max-aspect-ratio: 1/1), (max-width: 700px)").matches;
+    const vs = vids.current, urls: string[] = [];
+    const safari = /^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
+    let alive = true;
+    LEGS.forEach((l, i) => { const v = vs[i]; if (v) v.poster = `/castle/${l.clip}${phone ? "_m" : ""}.jpg`; });
+    (async () => {
+      for (let i = 0; i < LEGS.length && alive; i++) {
+        const v = vs[i], url = `/castle/${LEGS[i].clip}${phone ? "_m" : ""}.mp4`;
+        if (!v) continue;
+        // Safari streams and seeks plain files well but won't play blob copies of them
+        if (safari) { v.preload = "auto"; v.src = url; v.load(); await new Promise((r) => { v.addEventListener("canplaythrough", r, { once: true }); setTimeout(r, 6000); }); continue; }
+        try {
+          const blob = await (await fetch(url)).blob();
+          if (!alive) return;
+          const u = URL.createObjectURL(blob); urls.push(u);
+          v.src = u;
+        } catch {
+          v.preload = "auto"; v.src = url;   // fall back to streaming
+        }
+        v.load();
+      }
+    })();
+    const prime = () => vs.forEach((v) => { if (v?.src && v.paused) v.play().then(() => v.pause()).catch(() => {}); });
+    addEventListener("pointerdown", prime, { once: true });
+    return () => { alive = false; removeEventListener("pointerdown", prime); urls.forEach((u) => URL.revokeObjectURL(u)); };
+  }, []);
 
   useEffect(() => {
     const el = root.current!;
-    let raf = 0, cur = 0, lastLeg = -1, lastBanner = -1;
+    let raf = 0, cur = 0, lastLeg = -1, lastBanner = -1, lastLine = -1, prev = 0;
     const vt = LEGS.map(() => 0);
     const frame = () => {
       raf = requestAnimationFrame(frame);
@@ -66,13 +97,27 @@ export default function Castle({ side, onChoose }: { side: Side | null; onChoose
         const k = cl((p - l.a) / (l.b - l.a));
         const fadeIn = i === 0 ? 1 : sm((p - l.a) / 0.012), fadeOut = i === LEGS.length - 1 ? 1 : 1 - sm((p - l.b + 0.012) / 0.012);
         v.style.opacity = i === leg ? String(fadeIn * fadeOut) : "0";
-        if (i === leg && v.duration) {
+        if (i === leg && v.duration && v.readyState >= 1) {
           const want = Math.min(v.duration - 0.05, k * v.duration);
           vt[i] += (want - vt[i]) * 0.3;
           if (Math.abs(v.currentTime - vt[i]) > 0.015 && !v.seeking) v.currentTime = vt[i];
         }
       });
-      if (leg !== lastLeg) { if (lastLeg >= 0 && forward) drumHit(0.8, true); lastLeg = leg; }
+      if (leg !== lastLeg) {
+        if (lastLeg >= 0 && forward) { drumHit(0.8, true); if (leg === 2) cue("braam", 0.7); }
+        lastLeg = leg;
+      }
+      // sound: the bed throughout; thunder as the lightning breaks over the gate; the doors' weight
+      setBed(1);
+      if (forward && prev < THUNDER_AT && p >= THUNDER_AT) cue("thunder");
+      if (forward && prev < DOORS_AT && p >= DOORS_AT) cue("rumble");
+      prev = p;
+
+      // the gate comes up out of the black of Doom's mask; at the end the throne room dims to the
+      // level it keeps behind the rest of the site, so there is no seam
+      if (blackRef.current) blackRef.current.style.opacity = String(Math.max(1 - sm(p / 0.035), 0.78 * sm((p - 0.94) / 0.035)));
+      // …and then the castle itself gives way to that same frame, already pinned behind it
+      if (stageRef.current) stageRef.current.style.opacity = String(1 - sm((p - 0.975) / 0.02));
 
       // the name over the gate, pushed toward us with the camera
       const tt = titleRef.current;
@@ -92,101 +137,56 @@ export default function Castle({ side, onChoose }: { side: Side | null; onChoose
         const q = (p - BANNER_AT(i)) / (narrow ? 0.085 : 0.12);   // one at a time on a phone
         const o = sm(q / 0.18) * (1 - sm((q - 0.78) / 0.22));
         // on narrow screens the banners come straight at us instead of passing to the sides
-        const s = narrow ? 0.7 + q * 0.45 : 0.5 + q * 0.95, dir = i % 2 === 0 ? -1 : 1;
+        const s = 0.94 + q * 0.12, dir = i % 2 === 0 ? -1 : 1;
         n.style.opacity = String(q > 0 && q < 1 ? o : 0);
-        n.style.transform = `translate(calc(-50% + ${dir * (narrow ? q * 6 : 8 + q * 26)}vw), calc(-50% + ${(1 - q) * -2}vh)) scale(${s})`;
+        n.style.transform = `translate(${dir * (narrow ? q * 3 : q * 6)}vw, -50%) scale(${s})`;
         if (q > 0.15 && q < 0.85) activeBanner = i;
       });
       if (activeBanner !== lastBanner) { if (activeBanner >= 0 && forward) drumHit(0.5); lastBanner = activeBanner; }
 
+      let line = -1;
       THRONE_LINES.forEach(([a, b], i) => {
         const n = lines.current[i];
         if (!n) return;
         const o = win(p, a, b);
         n.style.opacity = String(o); n.style.filter = `blur(${(1 - o) * 8}px)`;
+        if (o > 0.5) line = i;
       });
-      const ch = choiceRef.current;
-      if (ch) {
-        const o = sm((p - CHOICE_AT) / 0.03);
-        ch.style.opacity = String(o);
-        ch.style.visibility = o > 0.01 ? "visible" : "hidden";
-        ch.style.transform = `translateY(${(1 - o) * 30}px)`;
-      }
+      if (line !== lastLine) { if (forward && line === 1) { cue("boom", 0.6); drumHit(1, true); } lastLine = line; }
     };
     raf = requestAnimationFrame(frame);
     return () => cancelAnimationFrame(raf);
   }, []);
 
-  const choose = (s: Side) => {
-    drumHit(s === "kneel" ? 0.9 : 1, true);
-    setTally((t) => {
-      if (!t || side === s) return t;
-      const n = { ...t };
-      if (side) n[side] = Math.max(0, n[side] - 1);
-      n[s] += 1;
-      return n;
-    });
-    onChoose(s);
-  };
-  const total = tally ? tally.kneel + tally.resist : 0;
-  const kp = total ? Math.round((tally!.kneel / total) * 100) : 50;
-
   return (
     <section ref={root} id="castle" className="castle" aria-label="Castle Doom">
-      <div className="castle__stage">
+      <div ref={stageRef} className="castle__stage">
         {LEGS.map((l, i) => (
-          <video key={l.id} ref={(n) => { vids.current[i] = n; }} className="castle__film" src={`/castle/${l.clip}.mp4`} poster={`/castle/${l.clip}.jpg`}
-            muted playsInline preload="auto" aria-hidden="true" style={{ opacity: i === 0 ? 1 : 0 }} />
+          <video key={l.id} ref={(n) => { vids.current[i] = n; }} className="castle__film"
+            muted playsInline preload="none" disablePictureInPicture aria-hidden="true" style={{ opacity: i === 0 ? 1 : 0 }} />
         ))}
         <div className="castle__shade" aria-hidden="true" />
+        <div ref={blackRef} className="castle__black" aria-hidden="true" />
 
         <div ref={titleRef} className="castle__title" style={{ opacity: 0 }}>
-          <span className="saga__kicker">{EVENT.host}</span>
-          <h2 className="decree-type">{EVENT.name} <em>{EVENT.edition}</em></h2>
-          <span className="castle__sub">{EVENT.title}</span>
+          <h2>{EVENT.name} <span>{EVENT.edition}</span></h2>
+          <p>{EVENT.host}</p>
         </div>
 
         {BANNERS.map((b, i) => (
-          <div key={b.k} ref={(n) => { banners.current[i] = n; }} className="banner" style={{ opacity: 0 }}>
-            <Sigil className="banner__sigil" />
-            <span className="banner__k">{b.k}</span>
-            <strong className="banner__v">{b.v}</strong>
-            <span className="banner__sub">{b.sub}</span>
+          <div key={b.k} ref={(n) => { banners.current[i] = n; }} className={`passing passing--${i % 2 ? "r" : "l"}`} style={{ opacity: 0 }}>
+            <span className="label">{b.k}</span>
+            <strong>{b.v}</strong>
+            {b.sub && <span className="passing__sub">{b.sub}</span>}
           </div>
         ))}
         {/* the same details, plainly, for screen readers */}
         <dl className="sr-only">{BANNERS.map((b) => <div key={b.k}><dt>{b.k}</dt><dd>{b.v}. {b.sub}.</dd></div>)}</dl>
 
         <div className="castle__lines" aria-hidden="true">
-          {THRONE_LINES.map(([, , t], i) => <p key={i} ref={(n) => { lines.current[i] = n; }} style={{ opacity: 0 }}>{t}</p>)}
+          {THRONE_LINES.map(([, , t], i) => <p key={i} ref={(n) => { lines.current[i] = n; }} className={i === 1 ? "castle__line--big" : ""} style={{ opacity: 0 }}>{t}</p>)}
         </div>
 
-        <div ref={choiceRef} id="choose" className="throne-choice" style={{ opacity: 0, visibility: "hidden" }}>
-          <p className="saga__kicker">Doom asks one question</p>
-          <h2 className="decree-type throne-choice__q">Kneel, or resist?</h2>
-          <div className="choice__opts" role="radiogroup" aria-label="Choose your side">
-            <button type="button" role="radio" aria-checked={side === "kneel"} className={`opt opt--kneel ${side === "kneel" ? "is-on" : ""}`} onClick={() => choose("kneel")}>
-              <span className="opt__mark" aria-hidden="true"><Sigil /></span>
-              <strong className="decree-type">Kneel</strong>
-              <span>Serve Latveria. Doom rewards the loyal.</span>
-            </button>
-            <button type="button" role="radio" aria-checked={side === "resist"} className={`opt opt--resist ${side === "resist" ? "is-on" : ""}`} onClick={() => choose("resist")}>
-              <span className="opt__mark opt__mark--resist" aria-hidden="true" />
-              <strong className="decree-type">Resist</strong>
-              <span>Stand against him. Doom remembers his enemies.</span>
-            </button>
-          </div>
-          <p className="choice__reply" aria-live="polite">
-            {side === "kneel" && "“Wise. Latveria remembers the loyal.”"}
-            {side === "resist" && "“Then you will be the first to fall.”"}
-          </p>
-          {tally && total > 0 && (
-            <div className="tally" aria-label={`${tally.kneel} knelt, ${tally.resist} resist`}>
-              <div className="tally__bar"><i style={{ width: `${kp}%` }} /></div>
-              <div className="tally__nums"><span>Latveria <b>{tally.kneel}</b></span><span><b>{tally.resist}</b> Resistance</span></div>
-            </div>
-          )}
-        </div>
       </div>
     </section>
   );

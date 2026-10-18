@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     "Doom has declared war on the fourth floor. Avengers, Fantastic Four, X-Men and Shang-Chi stand against him. Clockout 4.0 by SIGAI, AIML Department.",
   openGraph: {
     title: "Clockout 4.0 — The Doom Takeover",
-    description: "Doom has declared war. Choose your side.",
+    description: "Doom has taken the AIML Department. Clockout 4.0 is his tournament.",
     images: [{ url: "/cine/throne.jpg", width: 1280, height: 536, alt: "The throne of Doom" }],
   },
   twitter: { card: "summary_large_image", images: ["/cine/throne.jpg"] },

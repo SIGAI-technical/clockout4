@@ -64,7 +64,7 @@ void main(){
   col*=.92+.08*sin(uv.y*uRes.y*1.6);
   col+=(h1(vUv*uRes+fract(uTime)*71.)-.5)*.03;
   col*=smoothstep(1.3,.4,length((vUv-.5)*vec2(1.2,1.5)));
-  // a torn band glows green
-  col+=vec3(.1,.5,.25)*band*.4;
+  // a torn band flares a little
+  col+=vec3(.16,.18,.17)*band*.4;
   gl_FragColor=vec4(col,1.);
 }`;

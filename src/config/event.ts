@@ -53,18 +53,11 @@ export const EVENT = {
 
   // Paste the Google Form link here (…/viewform). Leave empty to show the placeholder frame.
   googleFormUrl: process.env.NEXT_PUBLIC_GOOGLE_FORM_URL || "",
-  // The form question that records the side ("Kneel" / "Resist"), as its prefill id, e.g. "entry.123456789".
-  // Get it from the form's ⋮ → "Get pre-filled link". Empty = the side is not sent with the form.
-  formSideEntry: process.env.NEXT_PUBLIC_FORM_SIDE_ENTRY || "",
-  // The live tally of sides: a Google Apps Script web app (see docs/side-tally.md). Empty = no live numbers.
-  tallyUrl: process.env.NEXT_PUBLIC_TALLY_URL || "",
 };
 
 /** The form link turned into its embeddable form, or null when not set. */
-export function formEmbedUrl(side?: "kneel" | "resist" | null): string | null {
+export function formEmbedUrl(): string | null {
   const u = EVENT.googleFormUrl.trim();
   if (!/^https:\/\/docs\.google\.com\/forms\//.test(u)) return null;
-  let out = u.includes("embedded=true") ? u : u + (u.includes("?") ? "&" : "?") + "embedded=true";
-  if (side && EVENT.formSideEntry) out += `&${EVENT.formSideEntry}=${side === "kneel" ? "Kneel" : "Resist"}`;
-  return out;
+  return u.includes("embedded=true") ? u : u + (u.includes("?") ? "&" : "?") + "embedded=true";
 }

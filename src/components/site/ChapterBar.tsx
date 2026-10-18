@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CHOICE_AT, LEGS } from "./Castle";
+import { LEGS, THRONE_AT } from "./Castle";
 
 /* The journey's chapters, along the bottom: where you are, and a way to jump. Chapters inside the
    castle are points along its pinned scroll; the rest are ordinary sections. */
@@ -9,9 +9,9 @@ type Ch = { label: string; castle?: number; id?: string };
 const CHAPTERS: Ch[] = [
   { label: "The gate", castle: LEGS[0].a },
   { label: "The hall", castle: LEGS[1].a + 0.01 },
-  { label: "The throne", castle: CHOICE_AT + 0.04 },
-  { label: "War table", id: "table" },
-  { label: "Enlist", id: "register" },
+  { label: "The throne", castle: THRONE_AT },
+  { label: "Details", id: "details" },
+  { label: "Register", id: "register" },
   { label: "Questions", id: "faq" },
 ];
 
@@ -46,7 +46,7 @@ export default function ChapterBar({ visible }: { visible: boolean }) {
           <li key={c.label}>
             <button type="button" className={i === active ? "is-active" : ""} aria-current={i === active ? "step" : undefined}
               onClick={() => scrollTo({ top: topOf(c), behavior: "smooth" })}>
-              <span className="chapters__n">{String(i + 1).padStart(2, "0")}</span>{c.label}
+              {c.label}
             </button>
           </li>
         ))}

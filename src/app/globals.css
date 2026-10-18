@@ -528,18 +528,7 @@ img, video, canvas { display: block; max-width: 100%; }
 .cam { aspect-ratio: 16 / 9; }
 
 /* ─── Doom, present: the hood and the eyes inside it ─────────────────── */
-.tk__doom { position: absolute; inset: 0; z-index: 5; pointer-events: none; overflow: hidden; mix-blend-mode: screen; --presence: 0; --eyes: 0; --push: 1; --lx: 0; --ly: 0; }
-.tk__doom-frame { position: absolute; left: 50%; top: 50%; width: max(100vw, 177.7vh); aspect-ratio: 1672 / 941; translate: -50% -50%;
-  transform: scale(var(--push)); transform-origin: 50% 40%; }
-.tk__doom-frame::before { content: ""; position: absolute; inset: 0; background: url(/sigai/hood.jpg) center / 100% 100% no-repeat; opacity: var(--presence);
-  filter: brightness(1.25) saturate(.8); transform-origin: 50% 30%; animation: doomBreath 5.2s cubic-bezier(.45,0,.55,1) infinite; }
-/* the slits of the faceplate, lit from inside; they track the viewer a little */
-.tk__eye { position: absolute; top: 38.6%; width: 5.4%; height: 1.5%; opacity: min(1, var(--eyes));
-  translate: calc(var(--lx) * 14px) calc(var(--ly) * 8px);
-  filter: brightness(calc(.7 + var(--eyes) * .55)) drop-shadow(0 0 4px #7dffb5) drop-shadow(0 0 18px #2bd47a) drop-shadow(0 0 60px rgba(43,212,122,.7)); }
-.tk__eye::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, #f3fff8, #9dffc8 45%, #2bd47a); }
-.tk__eye--l { left: 44.1%; } .tk__eye--l::before { clip-path: polygon(0 10%, 100% 48%, 94% 100%, 8% 72%); }
-.tk__eye--r { left: 50.5%; } .tk__eye--r::before { clip-path: polygon(0 48%, 100% 10%, 92% 72%, 6% 100%); }
+.tk__doom { position: absolute; inset: 0; z-index: 5; pointer-events: none; overflow: hidden; mix-blend-mode: screen; --presence: 0; --eyes: 0; --push: 1; }
 
 /* his words, low and centred over him */
 .tk__speech { position: absolute; left: 0; right: 0; bottom: 13vh; z-index: 7; text-align: center; padding: 0 var(--gutter); pointer-events: none; display: grid; justify-items: center; }
@@ -567,7 +556,6 @@ img, video, canvas { display: block; max-width: 100%; }
   transform: scale(calc(2.4 - var(--s, 0) * 1.4)); }
 .tk__stamp .sigil { width: 100%; margin: 0; }
 .tk__stamp .sigil__lines * { stroke: #e9fff2; stroke-width: 2.4; }
-@media (prefers-reduced-motion: reduce) { .tk__doom-frame::before { animation: none; } }
 
 /* ═══ The site after the opener ═══════════════════════════════════════════
    One accent drives everything: Latveria's green by default and for those who kneel; a cold hero
@@ -578,7 +566,7 @@ html[data-side="resist"] .decree-type { filter: drop-shadow(0 1px 0 rgba(124,200
 html[data-side="resist"] ::selection { background: rgba(124,200,255,.3); }
 .site, .after, .sec, .choice { transition: background-color .8s var(--ease); }
 
-.tk--opener { height: 330vh; }
+.tk--opener { height: 300vh; }
 
 /* top bar: the site's navigation */
 .topbar { gap: 20px; }
@@ -690,28 +678,26 @@ html[data-side="resist"] .sec__tag::after { content: "· encrypted"; color: var(
 /* the questions and the footer follow the side too */
 .after { background: radial-gradient(80% 50% at 50% 0, var(--acc-deep), #030504 70%); }
 
-/* ─── Doom's face: hood, eyes and their light, one object ─────────────── */
-.face { position: relative; aspect-ratio: 1672 / 941; }
-.face__body { position: absolute; inset: 0; transform-origin: 50% 32%; animation: doomBreath 5.2s cubic-bezier(.45,0,.55,1) infinite; }
-.face__body::before { content: ""; position: absolute; inset: 0; background: url(/sigai/hood.jpg) center / 100% 100% no-repeat; opacity: var(--presence, 1); filter: brightness(1.2) saturate(.8); }
-/* the eyes light the inside of the cowl: a low green bloom inside the face, and a touch on the hood's inner rim */
-.face__glow { position: absolute; left: 38%; right: 38%; top: 30%; height: 26%; border-radius: 50%; opacity: calc(min(1, var(--eyes, 1)) * var(--presence, 1) * .3);
-  background: radial-gradient(50% 38% at 50% 42%, rgba(70,224,143,.55), rgba(43,212,122,.16) 45%, transparent 75%); mix-blend-mode: screen; filter: blur(6px); }
-/* the eyes: not lamps — two dim embers far back in the dark of the hood, uneven, alive */
-.face__eye { position: absolute; top: 40.6%; width: 1.5%; aspect-ratio: 1.7; border-radius: 50%; opacity: calc(min(1, var(--eyes, 1)) * var(--presence, 1));
-  translate: calc(var(--lx, 0) * .25%) calc(var(--ly, 0) * .18%);
-  background: radial-gradient(closest-side, rgba(225,255,236,.95), rgba(120,255,180,.75) 35%, rgba(40,200,110,.25) 70%, transparent);
-  filter: blur(.6px) drop-shadow(0 0 6px rgba(60,230,130,.55)); animation: ember 3.7s ease-in-out infinite; }
-.face__eye--l { left: 46%; rotate: 8deg; }
-.face__eye--r { left: 52.5%; rotate: -8deg; animation-delay: -1.3s; }
-@keyframes ember { 0%, 100% { scale: 1; filter: blur(.6px) brightness(1) drop-shadow(0 0 6px rgba(60,230,130,.55)); } 47% { scale: .86 .8; filter: blur(.8px) brightness(.7) drop-shadow(0 0 4px rgba(60,230,130,.4)); } 52% { scale: 1.06; } }
+/* ─── Doom's face: the iron mask in the hood, and the light in its eyes ─── */
+.face { position: relative; aspect-ratio: 1896 / 1064; }
+.face__body { position: absolute; inset: 0; transform-origin: 50% 40%; animation: doomBreath 5.2s cubic-bezier(.45,0,.55,1) infinite; }
+.face__body::before { content: ""; position: absolute; inset: 0; background: url(/sigai/doom_mask.jpg) center / 100% 100% no-repeat; opacity: var(--presence, 1); }
+/* when he wakes, a cold green light catches in the eye slots — no brighter than the steel around them */
+.face__glint { position: absolute; top: 19%; width: 15%; height: 13%; border-radius: 50%; mix-blend-mode: screen; filter: blur(6px);
+  opacity: calc(min(1, var(--eyes, 1)) * var(--presence, 1) * .5);
+  background: radial-gradient(closest-side, rgba(150,230,185,.5), rgba(60,170,110,.22) 55%, transparent); animation: glint 4.3s ease-in-out infinite; }
+.face__glint--l { left: 25.5%; } .face__glint--r { left: 56%; animation-delay: -1.7s; }
+@keyframes glint { 0%, 100% { opacity: calc(min(1, var(--eyes, 1)) * var(--presence, 1) * .5); } 50% { opacity: calc(min(1, var(--eyes, 1)) * var(--presence, 1) * .32); } }
+@media (prefers-reduced-motion: reduce) { .face__body, .face__glint { animation: none; } }
+
 /* the opener's Doom fills the screen; its push and presence come from the scroll */
-.tk__doom .face { position: absolute; left: 50%; top: 50%; width: max(100vw, 177.7vh); translate: -50% -50%; transform: scale(var(--push)); transform-origin: 50% 42%; }
+.tk__doom .face { position: absolute; left: 50%; top: 37%; width: min(138vh, 112vw); translate: -50% -50%; transform: scale(var(--push)); transform-origin: 50% 62%; will-change: transform; }
+/* a phone is narrow: show the whole mask rather than a strip of it */
+@media (max-aspect-ratio: 1/1) { .tk__doom .face { width: 165vw; top: 38%; } }
 /* the choice: his face above the question, close and dim */
-@media (prefers-reduced-motion: reduce) { .face__body, .face__eye { animation: none; } }
 
 /* ═══ Castle Doom: the scroll is the camera ═══════════════════════════════ */
-.castle { position: relative; height: 1100vh; background: #000; }
+.castle { position: relative; height: 760vh; background: #000; }
 .castle__stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
 .castle__film { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #000; }
 .castle__shade { position: absolute; inset: 0; pointer-events: none; z-index: 1;
@@ -869,3 +855,147 @@ html[data-side="resist"] .sec__tag::after { content: "· encrypted"; color: var(
 .chapters__n { font-family: var(--f-sans); font-size: 9px; letter-spacing: .1em; opacity: .7; }
 @media (max-width: 720px) { .chapters ol { grid-template-columns: repeat(6, auto); overflow-x: auto; } .chapters button { padding: 11px 12px; white-space: nowrap; } .chapters__n { display: none; } }
 @media (max-width: 700px) { .banner { width: 64vw; padding: 26px 16px 56px; } .banner__v { font-size: 18px; } .banner__sigil { width: 46px !important; } }
+
+.tk__black, .castle__black { position: absolute; inset: 0; z-index: 8; background: #000; pointer-events: none; opacity: 0; }
+.castle__black { z-index: 2; opacity: 1; }
+
+/* ═══ Restraint ═══════════════════════════════════════════════════════════
+   One serif, set quietly, in bone on near-black. One accent, muted, used for small things only
+   (never a fill). No chrome gradients, no glows, no interface over the footage that doesn't earn it. */
+:root { --bone2: #ece6d8; --dim: rgba(236,230,216,.56); --hair: rgba(236,230,216,.16);
+  --venom: #8fb59c; --acc: #8fb59c; --acc-rgb: 143, 181, 156; --acc-deep: #0a110d; }
+html[data-side="resist"] { --venom: #a3b9cc; --acc: #a3b9cc; --acc-rgb: 163, 185, 204; --acc-deep: #0a0e12; }
+
+.decree-type, html[data-side="resist"] .decree-type { background: none; -webkit-background-clip: border-box; background-clip: border-box; color: var(--bone2); filter: none; font-weight: 500; letter-spacing: .03em; }
+.display { margin: 0; font-family: var(--f-decree), serif; font-weight: 500; font-size: clamp(34px, 4.2vw, 64px); line-height: 1.04; letter-spacing: .02em; color: var(--bone2); }
+.label { margin: 0; font-family: var(--f-sans); font-stretch: 110%; font-size: 11px; font-weight: 500; letter-spacing: .24em; text-transform: uppercase; color: var(--dim); }
+.sub { margin: 72px 0 22px; font-family: var(--f-decree), serif; font-weight: 500; font-size: 15px; letter-spacing: .16em; text-transform: uppercase; color: var(--bone2); }
+.note { margin: 14px 0 0; color: var(--dim); }
+.note a { color: var(--acc); }
+.wrap { position: relative; z-index: 1; max-width: 1120px; margin: 0 auto; }
+.head { margin-bottom: 44px; display: grid; gap: 14px; }
+.saga__kicker { color: var(--dim); font-family: var(--f-sans); font-weight: 500; letter-spacing: .24em; }
+.saga__hint { color: var(--dim); }
+.saga__hint i { background: linear-gradient(180deg, var(--dim), transparent); }
+
+/* top bar: quiet */
+.topbar__cta { background: transparent !important; color: var(--bone2) !important; border: 1px solid rgba(236,230,216,.38); box-shadow: none !important; }
+.topbar__cta:hover { border-color: var(--bone2); transform: none; }
+.side-chip { border: 0; padding: 0; color: var(--acc); font-weight: 500; letter-spacing: .22em; }
+.side-chip::before { display: none !important; }
+
+/* opener: the hijack is a flicker of text, not a badge */
+.tk__nosignal strong { background: none !important; box-shadow: none !important; padding: 0; font-weight: 500; font-size: 12px; letter-spacing: .5em; color: var(--dim) !important; }
+.tk__got { color: var(--bone2) !important; }
+.tk__nosignal[data-state="intercepted"] .tk__got { animation: jolt .4s steps(2) 1; }
+.tk__say--huge { font-family: var(--f-decree), serif; font-weight: 500; font-size: clamp(44px, 6vw, 96px); letter-spacing: .04em; line-height: 1; color: var(--bone2); margin-top: 18px; }
+.tk__say--voice { color: rgba(236,230,216,.8); }
+
+/* castle */
+.castle__title { top: 34%; }
+.castle__title h2 { margin: 0 0 14px; font-family: var(--f-decree), serif; font-weight: 500; font-size: clamp(40px, 6.4vw, 104px); line-height: 1; letter-spacing: .08em; color: var(--bone2); text-shadow: 0 4px 40px rgba(0,0,0,.8); }
+.castle__title h2 span { font-size: .4em; letter-spacing: .1em; vertical-align: .9em; color: var(--dim); }
+.castle__title p { margin: 0; font-family: var(--f-sans); font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: rgba(236,230,216,.7); text-shadow: 0 2px 16px #000; }
+.passing { position: absolute; top: 60%; z-index: 3; width: min(360px, 70vw); display: grid; gap: 10px; pointer-events: none; text-shadow: 0 2px 24px rgba(0,0,0,.9), 0 0 2px #000; }
+.passing--l { left: calc(var(--gutter) + 3vw); transform-origin: 0 50%; }
+.passing--r { right: calc(var(--gutter) + 3vw); text-align: right; transform-origin: 100% 50%; }
+.passing .label { color: rgba(236,230,216,.7); }
+.passing strong { font-family: var(--f-decree), serif; font-weight: 500; font-size: clamp(24px, 2.4vw, 36px); line-height: 1.15; color: var(--bone2); }
+.passing__sub { font-family: var(--f-voice); font-style: italic; font-size: 18px; color: rgba(236,230,216,.75); }
+@media (max-width: 700px) { .passing { top: 64%; } .passing--r { right: auto; left: var(--gutter); text-align: left; transform-origin: 0 50%; } }
+.castle__lines p { color: rgba(236,230,216,.85); }
+
+.throne-choice__q { font-size: clamp(36px, 4.6vw, 72px); margin: 0 0 30px; }
+.throne-choice .opt { min-width: 0; padding: 22px 20px; background: rgba(0,0,0,.42); backdrop-filter: blur(6px); border: 1px solid rgba(236,230,216,.24); box-shadow: none !important; gap: 6px; transform: none !important; }
+.throne-choice .opt strong { font-family: var(--f-decree), serif; font-weight: 500; font-size: clamp(24px, 2.2vw, 32px); letter-spacing: .08em; color: var(--bone2); }
+.throne-choice .opt span { font-family: var(--f-sans); font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--dim); }
+.throne-choice .opt:hover { border-color: rgba(236,230,216,.6); }
+.throne-choice .opt--kneel.is-on { border-color: #8fb59c; }
+.throne-choice .opt--resist.is-on { border-color: #a3b9cc; }
+.throne-choice .choice__opts { grid-template-columns: repeat(2, minmax(0, 260px)); }
+.throne-choice .opt > span:last-child { display: block !important; }
+.choice__reply { font-size: clamp(20px, 1.8vw, 26px); color: rgba(236,230,216,.85); }
+.tally__bar { height: 2px; background: #a3b9cc; box-shadow: none; }
+.tally__bar i { background: #8fb59c; box-shadow: none; }
+
+/* details: over a dim view of the hall */
+.details { position: relative; padding: clamp(110px, 16vh, 170px) var(--gutter) clamp(90px, 12vh, 130px); overflow: hidden; background: #050605; }
+.details .facts { border-top-color: var(--hair); }
+.details .facts div { border-bottom-color: var(--hair); }
+.details .facts dt, .trials2 dt, .rows, .count span { font-family: var(--f-sans); font-size: 10px; font-weight: 500; letter-spacing: .24em; text-transform: uppercase; color: var(--dim); }
+.details .facts dd { font-size: 19px; color: var(--bone2); }
+.when { display: grid; grid-template-columns: 1.5fr 1fr; gap: clamp(30px, 5vw, 80px); align-items: end; }
+.count { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--hair); }
+.count div { display: grid; gap: 6px; padding: 18px 0 16px; border-bottom: 1px solid var(--hair); }
+.count b { font-family: var(--f-decree), serif; font-weight: 500; font-size: clamp(30px, 3vw, 46px); line-height: 1; color: var(--bone2); font-variant-numeric: tabular-nums; }
+.trials2 { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px, 3vw, 44px); }
+.trials2 li { border-top: 1px solid var(--hair); padding-top: 22px; }
+.trials2__n { font-family: var(--f-decree), serif; font-size: 13px; letter-spacing: .14em; color: var(--acc); }
+.trials2 h4 { margin: 10px 0 10px; font-family: var(--f-decree), serif; font-weight: 500; font-size: clamp(21px, 1.9vw, 27px); color: var(--bone2); }
+.trials2 p { margin: 0 0 20px; color: var(--dim); }
+.trials2 dl { margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.trials2 dd { margin: 4px 0 0; color: var(--bone2); font-size: 15px; }
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(30px, 6vw, 90px); }
+.pool { margin: 0 0 20px; font-family: var(--f-decree), serif; font-weight: 500; font-size: clamp(38px, 4.4vw, 66px); line-height: 1.05; color: var(--bone2); }
+.rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--hair); }
+.rows li { display: flex; justify-content: space-between; gap: 20px; padding: 14px 0; border-bottom: 1px solid var(--hair); }
+.rows li span:last-child { color: var(--bone2); letter-spacing: .1em; }
+.rules { margin: 0 0 30px; padding: 0; list-style: none; counter-reset: r; border-top: 1px solid var(--hair); }
+.rules li { counter-increment: r; display: grid; grid-template-columns: 44px 1fr; padding: 14px 0; border-bottom: 1px solid var(--hair); color: var(--bone2); }
+.rules li::before { content: counter(r, upper-roman); font-family: var(--f-decree), serif; font-size: 13px; color: var(--acc); padding-top: 3px; }
+.facts--one { grid-template-columns: 1fr; }
+@media (max-width: 860px) { .when, .split, .trials2 { grid-template-columns: 1fr; } .details .facts { grid-template-columns: 1fr; } }
+
+.register { padding: clamp(100px, 14vh, 150px) var(--gutter); background: #050605; border-top: 1px solid var(--hair); scroll-margin-top: 20px; }
+.form-frame { height: min(80vh, 900px); border: 1px solid var(--hair); background: #f4f4f2; }
+.form-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+.form-frame__empty { height: 100%; display: grid; place-content: center; gap: 10px; padding: 24px; text-align: center; color: #2a2f2c; }
+.form-frame__empty strong { font-family: var(--f-decree), serif; font-weight: 500; font-size: 22px; letter-spacing: .08em; }
+.form-frame__empty span { font-size: 14px; max-width: 40ch; }
+.site [data-reveal] { transform: translateY(18px); }
+
+/* questions */
+.after { background: #050605 !important; border-top: 1px solid var(--hair); }
+.after__title { margin: 0 0 34px; }
+.faq__item.is-open .faq__n { color: var(--acc); }
+.contacts .sub { margin-top: 0; }
+
+/* chapters: a thin line of text, nothing more */
+.chapters { background: linear-gradient(0deg, rgba(0,0,0,.75), rgba(0,0,0,.45)); backdrop-filter: blur(8px); border: 0; border-top: 1px solid var(--hair); bottom: 0; left: 0; right: 0; max-width: none; }
+.chapters ol { max-width: 980px; margin: 0 auto; }
+.chapters__prog { height: 1px; box-shadow: none; background: var(--bone2); opacity: .6; }
+.chapters button { font-family: var(--f-sans); font-size: 10px; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; color: rgba(236,230,216,.45); padding: 14px 8px; }
+.chapters button.is-active { color: var(--bone2); background: none; }
+/* the intro's Enter: the same quiet outline as every other button */
+.gate__enter.is-ready { background: rgba(0,0,0,.35); border-color: rgba(236,230,216,.45); box-shadow: none; color: var(--bone2); }
+.gate__enter.is-ready:hover { transform: none; border-color: var(--bone2); box-shadow: none; }
+.contacts ul { background: var(--hair); border-color: var(--hair); }
+.contacts li { background: #050605; }
+
+/* the throne room's last words */
+.castle__lines p.castle__line--big { font-family: var(--f-decree), serif; font-style: normal; font-weight: 500; font-size: clamp(36px, 4.6vw, 72px); letter-spacing: .04em; color: var(--bone2); }
+
+/* asking for sound, once */
+.sound-hint { position: fixed; left: 50%; bottom: 64px; z-index: 70; translate: -50% 0; display: inline-flex; align-items: center; gap: 4px; padding: 10px 16px 10px 14px;
+  background: rgba(0,0,0,.6); backdrop-filter: blur(8px); border: 1px solid rgba(236,230,216,.3); color: var(--bone2); cursor: pointer;
+  font-family: var(--f-sans); font-size: 10px; font-weight: 500; letter-spacing: .24em; text-transform: uppercase;
+  opacity: 0; transform: translateY(10px); pointer-events: none; transition: opacity .6s var(--ease), transform .6s var(--ease); }
+.sound-hint.is-on { opacity: 1; transform: none; pointer-events: auto; }
+.sound-hint i { width: 2px; height: 10px; margin-right: 1px; background: var(--bone2); transform-origin: bottom; animation: eq 1s ease-in-out infinite; }
+.sound-hint i:nth-child(2) { animation-delay: -.3s; } .sound-hint i:nth-child(3) { animation-delay: -.6s; margin-right: 10px; }
+
+/* ─── After the throne room: still in it ─────────────────────────────── */
+.world { position: relative; background: #050605; }
+.world__bg { position: sticky; top: 0; height: 100vh; height: 100svh; margin-bottom: -100vh; margin-bottom: -100svh; z-index: 0; pointer-events: none;
+  background: url(/castle/throne_end.jpg) center 40% / cover no-repeat; filter: brightness(.22) saturate(.85); }
+.world__bg::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 90% at 50% 40%, transparent 30%, rgba(0,0,0,.55) 100%); }
+.world .details, .world .register, .world .after { position: relative; z-index: 1; background: transparent !important; }
+.world .register, .world .after { border-top-color: transparent; }
+.world .contacts li { background: rgba(5,6,5,.6); }
+/* the world's backdrop starts one screen early, underneath the castle's last frame, so it is already
+   pinned in exactly the same place when the castle scrolls away: no seam */
+.castle { z-index: 2; }
+.world { margin-top: -100vh; margin-top: -100svh; z-index: 1; }
+.world > .site { padding-top: 100vh; padding-top: 100svh; }
+.castle { background: transparent; }
+.castle__stage { background: #000; }

@@ -5,7 +5,16 @@
 import { isSfxMuted } from "./sfx";
 
 let ctx: AudioContext | null = null;
-const getCtx = () => (ctx ??= new AudioContext());
+/** The live audio context — or null where the browser has none (older iOS names it webkitAudioContext;
+ *  some embedded browsers have neither). Sound is a nicety: without it the site must still run. */
+const getCtx = (): AudioContext | null => {
+  if (ctx) return ctx;
+  const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+  if (!AC) return null;
+  try { ctx = new AC(); } catch { return null; }
+  return ctx;
+};
+const OAC = () => (typeof window === "undefined" ? undefined : window.OfflineAudioContext ?? (window as unknown as { webkitOfflineAudioContext?: typeof OfflineAudioContext }).webkitOfflineAudioContext);
 const hz = (midi: number) => 440 * Math.pow(2, (midi - 69) / 12);
 type Ctx = BaseAudioContext;
 
@@ -94,6 +103,7 @@ function makeBreather(c: Ctx, out: AudioNode, room: AudioNode) {
 export function startOmen(): Handle {
   if (isSfxMuted() || typeof window === "undefined") return NOOP;
   const c = getCtx();
+  if (!c) return NOOP;
   if (c.state === "suspended") c.resume().catch(() => {});
   const out = c.createGain(); out.gain.value = 0;
   out.gain.setTargetAtTime(0.42, c.currentTime + 0.1, 1.5);
@@ -202,7 +212,9 @@ let rendered: Promise<AudioBuffer | null> | null = null;
 export function preloadIdentScore() {
   if (typeof window === "undefined" || rendered) return;
   try {
-    const off = new OfflineAudioContext(2, Math.ceil(44100 * LEN), 44100);
+    const Off = OAC();
+    if (!Off) { rendered = Promise.resolve(null); return; }
+    const off = new Off(2, Math.ceil(44100 * LEN), 44100);
     compose(off);
     rendered = off.startRendering().catch(() => null);
   } catch { rendered = Promise.resolve(null); }
@@ -219,6 +231,7 @@ export function playIdentScore(): Handle {
   if (isSfxMuted() || typeof window === "undefined") return NOOP;
   preloadIdentScore();
   const c = getCtx();
+  if (!c) return NOOP;
   if (c.state === "suspended") c.resume().catch(() => {});
   let start = -1, src: AudioBufferSourceNode | null = null, cancelled = false;
   const g = c.createGain(); g.connect(c.destination);
@@ -242,6 +255,11 @@ export function playIdentScore(): Handle {
 export function resumeAudio() {
   if (ctx && ctx.state === "suspended") ctx.resume().catch(() => {});
 }
+// the live drums must work even if the intro was skipped: any tap or key wakes the context
+if (typeof window !== "undefined") {
+  const wake = () => { getCtx(); resumeAudio(); };
+  ["pointerdown", "keydown", "touchend"].forEach((e) => addEventListener(e, wake, { passive: true }));
+}
 
 // dev-only hooks to render both sounds offline for inspection
 if (typeof window !== "undefined" && process.env.NODE_ENV !== "production") {
@@ -258,7 +276,9 @@ if (typeof window !== "undefined" && process.env.NODE_ENV !== "production") {
 
 /** One live war-drum hit (march steps, banners, the clash). `v` 0..1; `deep` lowers the pitch. */
 export function drumHit(v = 0.5, deep = false) {
-  if (isSfxMuted() || typeof window === "undefined" || !ctx || ctx.state !== "running") return;
+  if (isSfxMuted() || typeof window === "undefined") return;
+  if (!ctx && !getCtx()) return;
+  if (!ctx || ctx.state !== "running") return;
   const c = ctx, at = c.currentTime + 0.005;
   const out = c.createGain(); out.gain.value = 0.55 * v; out.connect(c.destination);
   const o = c.createOscillator();

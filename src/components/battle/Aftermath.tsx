@@ -9,8 +9,7 @@ export function Aftermath() {
   return (
     <section id="faq" className="after" aria-labelledby="faq-title">
       <div className="after__inner">
-        <p className="saga__kicker">After the smoke</p>
-        <h2 id="faq-title" className="decree-type after__title">Petitions to Doom</h2>
+        <h2 id="faq-title" className="display after__title">Questions</h2>
         <div className="faq">
           {EVENT.faq.map((f, i) => (
             <div key={i} className={`faq__item ${open === i ? "is-open" : ""}`}>
@@ -27,7 +26,7 @@ export function Aftermath() {
         </div>
 
         <div className="contacts">
-          <p className="saga__kicker">Send word to Doom&rsquo;s heralds</p>
+          <h3 className="sub">Contact</h3>
           <ul>
             {EVENT.contacts.map((c, i) => (
               <li key={i}><strong>{c.name}</strong><a href={`tel:${c.phone.replace(/[^+\d]/g, "")}`}>{c.phone}</a></li>
@@ -43,7 +42,7 @@ export function Aftermath() {
   );
 }
 
-export function TopBar({ visible, muted, side, onMute, onRegister }: { visible: boolean; muted: boolean; side: "kneel" | "resist" | null; onMute: () => void; onRegister: () => void }) {
+export function TopBar({ visible, muted, onMute, onRegister }: { visible: boolean; muted: boolean; onMute: () => void; onRegister: () => void }) {
   return (
     <nav className={`topbar ${visible ? "is-on" : ""}`} aria-label="Primary">
       <a href="#top" className="topbar__mark" aria-label="Back to the start">
@@ -51,11 +50,10 @@ export function TopBar({ visible, muted, side, onMute, onRegister }: { visible: 
         <span>{EVENT.name} <em>{EVENT.edition}</em></span>
       </a>
       <div className="topbar__right">
-        <a href="#choose" className={`side-chip ${side ? `side-chip--${side}` : ""}`}>{side === "kneel" ? "Loyal to Latveria" : side === "resist" ? "Resistance" : "Choose a side"}</a>
         <button type="button" className={`sound ${muted ? "is-muted" : ""}`} onClick={onMute} aria-pressed={!muted} aria-label={muted ? "Turn sound on" : "Turn sound off"}>
           <i /><i /><i /><i />
         </button>
-        <button type="button" className="topbar__cta" onClick={onRegister}>{side === "resist" ? "Enlist" : side === "kneel" ? "Swear in" : "Register"}</button>
+        <button type="button" className="topbar__cta" onClick={onRegister}>Register</button>
       </div>
     </nav>
   );

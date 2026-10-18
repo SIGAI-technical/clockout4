@@ -15,6 +15,8 @@ export const EVENT = {
   host: "SIGAI · AIML Department",
 
   date: "[Date to be announced]",
+  // When it starts, for the Doomsday clock (ISO with offset, e.g. "2026-12-05T10:00:00+05:30"). Empty = clock hidden.
+  startsAt: "",
   time: "[Start time] – [End time]",
   venue: "[Room], 4th Floor, AIML Department",
   reporting: "[Reporting time]",
@@ -51,11 +53,18 @@ export const EVENT = {
 
   // Paste the Google Form link here (…/viewform). Leave empty to show the placeholder frame.
   googleFormUrl: process.env.NEXT_PUBLIC_GOOGLE_FORM_URL || "",
+  // The form question that records the side ("Kneel" / "Resist"), as its prefill id, e.g. "entry.123456789".
+  // Get it from the form's ⋮ → "Get pre-filled link". Empty = the side is not sent with the form.
+  formSideEntry: process.env.NEXT_PUBLIC_FORM_SIDE_ENTRY || "",
+  // The live tally of sides: a Google Apps Script web app (see docs/side-tally.md). Empty = no live numbers.
+  tallyUrl: process.env.NEXT_PUBLIC_TALLY_URL || "",
 };
 
 /** The form link turned into its embeddable form, or null when not set. */
-export function formEmbedUrl(): string | null {
+export function formEmbedUrl(side?: "kneel" | "resist" | null): string | null {
   const u = EVENT.googleFormUrl.trim();
   if (!/^https:\/\/docs\.google\.com\/forms\//.test(u)) return null;
-  return u.includes("embedded=true") ? u : u + (u.includes("?") ? "&" : "?") + "embedded=true";
+  let out = u.includes("embedded=true") ? u : u + (u.includes("?") ? "&" : "?") + "embedded=true";
+  if (side && EVENT.formSideEntry) out += `&${EVENT.formSideEntry}=${side === "kneel" ? "Kneel" : "Resist"}`;
+  return out;
 }

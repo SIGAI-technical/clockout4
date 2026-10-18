@@ -43,18 +43,19 @@ export function Aftermath() {
   );
 }
 
-export function TopBar({ visible, muted, onMute, onRegister }: { visible: boolean; muted: boolean; onMute: () => void; onRegister: () => void }) {
+export function TopBar({ visible, muted, side, onMute, onRegister }: { visible: boolean; muted: boolean; side: "kneel" | "resist" | null; onMute: () => void; onRegister: () => void }) {
   return (
     <nav className={`topbar ${visible ? "is-on" : ""}`} aria-label="Primary">
-      <a href="#saga" className="topbar__mark" aria-label="Back to the start">
+      <a href="#top" className="topbar__mark" aria-label="Back to the start">
         <span className="topbar__logo" aria-hidden="true" />
         <span>{EVENT.name} <em>{EVENT.edition}</em></span>
       </a>
       <div className="topbar__right">
+        <a href="#choose" className={`side-chip ${side ? `side-chip--${side}` : ""}`}>{side === "kneel" ? "Loyal to Latveria" : side === "resist" ? "Resistance" : "Choose a side"}</a>
         <button type="button" className={`sound ${muted ? "is-muted" : ""}`} onClick={onMute} aria-pressed={!muted} aria-label={muted ? "Turn sound on" : "Turn sound off"}>
           <i /><i /><i /><i />
         </button>
-        <button type="button" className="topbar__cta" onClick={onRegister}>Register</button>
+        <button type="button" className="topbar__cta" onClick={onRegister}>{side === "resist" ? "Enlist" : side === "kneel" ? "Swear in" : "Register"}</button>
       </div>
     </nav>
   );

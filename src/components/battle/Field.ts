@@ -11,7 +11,7 @@ export type FxKind = "arcs" | "mandala" | "glow" | "rings" | "flames" | "prism" 
 export type FxDef = { kind: FxKind; x: number; y: number; size: number; color: [number, number, number]; color2?: [number, number, number] };
 export type FigDef = { key: string; id: string; rank: number; fx?: FxDef[]; mirror?: boolean };
 /** `par`: parallax in figure widths (how far the near parts slide past the far parts); `key`: how much the cursor light shapes it */
-export type Pose = { x: number; foot: number; h: number; op: number; bright: number; haze: number; power: number; par?: number; key?: number };
+export type Pose = { x: number; foot: number; h: number; op: number; bright: number; haze: number; power: number; par?: number; key?: number; blur?: number; hit?: number };
 export type Cam = { zoom: number; cx: number; cy: number; pan: number; tilt: number; light: [number, number]; lightAmt: number; fog: number };
 
 const FX_TYPE: Record<FxKind, number> = { arcs: 0, mandala: 1, glow: 2, rings: 3, flames: 4, prism: 5, cards: 6, eyes: 7, dust: 8, halo: 9 };
@@ -22,7 +22,7 @@ void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,
 
 const FIG_FRAG = /* glsl */ `
 uniform sampler2D uMap, uMask, uDepth;
-uniform float uTime, uPhase, uWind, uBright, uHaze, uOp, uPower, uMirror, uBias, uPar, uKey;
+uniform float uTime, uPhase, uWind, uBright, uHaze, uOp, uPower, uMirror, uBias, uPar, uKey, uBlur, uHit;
 uniform vec3 uRim, uFlash, uFog, uL;
 varying vec2 vUv;
 void main(){
@@ -44,6 +44,8 @@ void main(){
   float dz=texture2D(uDepth,uv).r;
   uv.x+=uPar*(dz-.45);
   vec4 c=texture2D(uMap,uv,uBias);
+  // motion: smear along the direction of travel
+  if(uBlur>.001){ for(int i=1;i<6;i++){ c+=texture2D(uMap,uv+vec2(float(i)*uBlur*.012,0.),uBias); } c/=6.; }
   float a=c.a*uOp;
   if(a<.004) discard;
   // edges that face the storm (upper left) catch the lightning
@@ -61,6 +63,7 @@ void main(){
   col+=uFlash*(lit*1.6+.18);
   col+=uRim*(back+lit*.4)*uPower*(.75+.25*sin(uTime*6.+uPhase*3.));
   col=mix(col,uFog,uHaze);
+  col+=vec3(1.,.95,.85)*uHit*((lit+back)*2.2+.12);
   gl_FragColor=vec4(col*a,a);
 }`;
 
@@ -180,10 +183,63 @@ void main(){
   gl_FragColor=vec4(c*a,a*.8);
 }`;
 
-type FigRec = { sx: number; sy: number; sh: number; def: FigDef; mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.ShaderMaterial>; fx: { mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.ShaderMaterial>; def: FxDef }[]; aspect: number; phase: number };
+const BEAM_FRAG = /* glsl */ `
+uniform float uTime, uOp, uHead, uLen, uSeed, uKind; uniform vec3 uC;
+varying vec2 vUv;
+float h1(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+  return mix(mix(h1(i),h1(i+vec2(1,0)),f.x),mix(h1(i+vec2(0,1)),h1(i+vec2(1,1)),f.x),f.y);}
+void main(){
+  float x=vUv.x, y=vUv.y-.5;
+  // the lit stretch: from (head-len) to head, brightest at the head
+  float tail=uHead-uLen;
+  float on=smoothstep(tail,tail+.04,x)*smoothstep(uHead+.01,uHead-.01,x);
+  float grad=mix(.35,1.,clamp((x-tail)/max(uLen,.001),0.,1.));
+  float wob=(n(vec2(x*18.-uTime*30.,uSeed))-.5)*.18*(uKind>.5?1.:.3);
+  float yy=abs(y-wob);
+  float core=exp(-yy*38.), glow=exp(-yy*7.);
+  float flick=.8+.2*n(vec2(uTime*40.,uSeed));
+  vec3 col=(vec3(1.)*core*1.2+uC*glow*.9+uC*core)*on*grad*flick;
+  // the head itself flares
+  col+=uC*exp(-length(vec2((x-uHead)*6.,y))*9.)*1.5*step(.001,uLen);
+  gl_FragColor=vec4(col*uOp,0.);
+}`;
+
+const BURST_FRAG = /* glsl */ `
+uniform float uPh, uOp, uSeed; uniform vec3 uC;
+varying vec2 vUv;
+float h1(float p){return fract(sin(p*127.1)*43758.5453);}
+void main(){
+  vec2 q=vUv-.5; float r=length(q), a=atan(q.y,q.x);
+  float ph=uPh;
+  float flash=exp(-r*(8.+ph*30.))*(1.-ph)*2.2;
+  float ring=exp(-abs(r-ph*.46)*(60.-ph*30.))*(1.-ph)*1.3;
+  // sparks: thin radial streaks thrown outward
+  float s=0.;
+  for(int i=0;i<14;i++){
+    float fi=float(i);
+    float an=h1(fi+uSeed)*6.283, sp=.25+h1(fi*3.1+uSeed)*.25;
+    float d=abs(sin(a-an))*r;
+    float along=r-ph*sp;
+    s+=exp(-d*260.)*smoothstep(.07,0.,abs(along))*step(0.,cos(a-an));
+  }
+  vec3 col=(vec3(1.)*flash*.8+uC*(flash+ring+s*1.6*(1.-ph)));
+  gl_FragColor=vec4(col*uOp,0.);
+}`;
+
+const SHADOW_FRAG = /* glsl */ `
+uniform float uOp;
+varying vec2 vUv;
+void main(){
+  vec2 q=(vUv-.5)*2.;
+  float a=smoothstep(1.,0.,length(q))*.75+smoothstep(.45,0.,length(q*vec2(1.,1.6)))*.25;
+  gl_FragColor=vec4(0.,0.,0.,a*uOp);
+}`;
+
+type FigRec = { shadow: THREE.Mesh<THREE.PlaneGeometry, THREE.ShaderMaterial>; sx: number; sy: number; sh: number; def: FigDef; mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.ShaderMaterial>; fx: { mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.ShaderMaterial>; def: FxDef }[]; aspect: number; phase: number };
 
 const premul = { blending: THREE.CustomBlending, blendSrc: THREE.OneFactor, blendDst: THREE.OneMinusSrcAlphaFactor, transparent: true, depthTest: false, depthWrite: false } as const;
-const additive = { blending: THREE.AdditiveBlending, transparent: true, depthTest: false, depthWrite: false } as const;
+const additive = { blending: THREE.CustomBlending, blendSrc: THREE.OneFactor, blendDst: THREE.OneFactor, transparent: true, depthTest: false, depthWrite: false } as const;
 
 export class Field {
   private r: THREE.WebGLRenderer;
@@ -194,6 +250,8 @@ export class Field {
   private fogOp: number[] = [];
   private fogs: THREE.Mesh<THREE.PlaneGeometry, THREE.ShaderMaterial>[] = [];
   private ash: THREE.Points<THREE.BufferGeometry, THREE.ShaderMaterial>;
+  private beams: THREE.Mesh<THREE.PlaneGeometry, THREE.ShaderMaterial>[] = [];
+  private bursts: THREE.Mesh<THREE.PlaneGeometry, THREE.ShaderMaterial>[] = [];
   private W = 1; private H = 1;
   private loader = new THREE.TextureLoader();
 
@@ -236,6 +294,20 @@ export class Field {
     this.ash.renderOrder = 60; this.ash.frustumCulled = false;
     this.scene.add(this.ash);
 
+    // attacks: beams and thrown things, and the bursts where they land
+    for (let i = 0; i < 16; i++) {
+      const b = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.ShaderMaterial({
+        vertexShader: PLANE_VERT, fragmentShader: BEAM_FRAG, ...additive,
+        uniforms: { uTime: { value: 0 }, uOp: { value: 0 }, uHead: { value: 1 }, uLen: { value: 1 }, uSeed: { value: i * 3.7 }, uKind: { value: 0 }, uC: { value: new THREE.Vector3(1, 1, 1) } },
+      }));
+      b.renderOrder = 55; b.frustumCulled = false; b.visible = false; this.scene.add(b); this.beams.push(b);
+      const u = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.ShaderMaterial({
+        vertexShader: PLANE_VERT, fragmentShader: BURST_FRAG, ...additive,
+        uniforms: { uPh: { value: 0 }, uOp: { value: 0 }, uSeed: { value: i * 5.1 }, uC: { value: new THREE.Vector3(1, 1, 1) } },
+      }));
+      u.renderOrder = 56; u.frustumCulled = false; u.visible = false; this.scene.add(u); this.bursts.push(u);
+    }
+
     // the figures and their powers
     defs.forEach((d, i) => {
       const map = this.loader.load(`/battle/${d.id}.webp`, (t) => { t.needsUpdate = true; });
@@ -248,11 +320,14 @@ export class Field {
       const mat = new THREE.ShaderMaterial({
         vertexShader: PLANE_VERT, fragmentShader: FIG_FRAG, ...premul,
         uniforms: {
-          uMap: { value: map }, uMask: { value: mask }, uDepth: { value: depth }, uPar: { value: 0 }, uKey: { value: 0 }, uL: { value: new THREE.Vector3(0, 0, 1) }, uTime: { value: 0 }, uPhase: { value: phase }, uWind: { value: 1 }, uBright: { value: 1 },
+          uMap: { value: map }, uMask: { value: mask }, uDepth: { value: depth }, uPar: { value: 0 }, uKey: { value: 0 }, uBlur: { value: 0 }, uHit: { value: 0 }, uL: { value: new THREE.Vector3(0, 0, 1) }, uTime: { value: 0 }, uPhase: { value: phase }, uWind: { value: 1 }, uBright: { value: 1 },
           uHaze: { value: 0 }, uOp: { value: 0 }, uPower: { value: 0.5 }, uMirror: { value: d.mirror ? 1 : 0 }, uBias: { value: 0 },
           uRim: { value: new THREE.Vector3(...rim) }, uFlash: { value: new THREE.Vector3() }, uFog: { value: new THREE.Vector3(0.05, 0.09, 0.07) },
         },
       });
+      const shadow = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.ShaderMaterial({ vertexShader: PLANE_VERT, fragmentShader: SHADOW_FRAG, ...premul, uniforms: { uOp: { value: 0 } } }));
+      shadow.renderOrder = 9 + d.rank * 10; shadow.frustumCulled = false; shadow.visible = false;
+      this.scene.add(shadow);
       const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), mat);
       mesh.renderOrder = 10 + d.rank * 10; mesh.frustumCulled = false; mesh.visible = false;
       this.scene.add(mesh);
@@ -266,7 +341,7 @@ export class Field {
         return { mesh: fm, def: f };
       });
       const m = meta[d.id];
-      this.figs.set(d.key, { sx: 0, sy: 0, sh: 1, def: d, mesh, fx, aspect: m.w / m.h, phase });
+      this.figs.set(d.key, { shadow, sx: 0, sy: 0, sh: 1, def: d, mesh, fx, aspect: m.w / m.h, phase });
     });
     this.resize();
   }
@@ -290,15 +365,19 @@ export class Field {
     const f = this.figs.get(key);
     if (!f) return;
     const vis = p.op > 0.003;
-    f.mesh.visible = vis;
+    f.mesh.visible = vis; f.shadow.visible = vis;
     f.fx.forEach((x) => (x.mesh.visible = vis && p.power > 0.02));
     if (!vis) return;
     const w = p.h * f.aspect;
     f.mesh.position.set(p.x, this.H - (p.foot - p.h / 2), 0);
     f.mesh.scale.set(w, p.h, 1);
+    f.shadow.position.set(p.x, this.H - p.foot + p.h * 0.03, 0);
+    f.shadow.scale.set(w * 1.15, p.h * 0.09, 1);
+    f.shadow.material.uniforms.uOp.value = p.op * (1 - p.haze) * 0.85;
     const u = f.mesh.material.uniforms;
     f.sx = p.x; f.sy = p.foot - p.h / 2; f.sh = p.h;
     u.uPar.value = (p.par ?? 0) * (f.def.mirror ? -1 : 1); u.uKey.value = p.key ?? 0.35;
+    u.uBlur.value = p.blur ?? 0; u.uHit.value = p.hit ?? 0;
     u.uOp.value = p.op; u.uBright.value = p.bright; u.uHaze.value = p.haze; u.uPower.value = p.power; u.uBias.value = p.haze * 3;
     f.fx.forEach(({ mesh, def }) => {
       const fx = f.def.mirror ? 1 - def.x : def.x;
@@ -308,6 +387,25 @@ export class Field {
       mesh.material.uniforms.uOp.value = p.op * p.power * (1 - p.haze * 0.6);
     });
   }
+
+  /** A beam or a thrown thing from a to b (screen px, y down). head/len: the lit stretch, as fractions of the path. */
+  beam(i: number, a: [number, number], b: [number, number], o: { w: number; color: [number, number, number]; op: number; head?: number; len?: number; jag?: boolean }) {
+    const m = this.beams[i]; if (!m) return;
+    m.visible = o.op > 0.003; if (!m.visible) return;
+    const ax = a[0], ay = this.H - a[1], bx = b[0], by = this.H - b[1];
+    const L = Math.hypot(bx - ax, by - ay);
+    m.position.set((ax + bx) / 2, (ay + by) / 2, 0); m.rotation.z = Math.atan2(by - ay, bx - ax); m.scale.set(L + o.w, o.w * 3, 1);
+    const u = m.material.uniforms;
+    u.uOp.value = o.op; u.uHead.value = o.head ?? 1; u.uLen.value = o.len ?? 1; u.uKind.value = o.jag ? 1 : 0; (u.uC.value as THREE.Vector3).set(...o.color);
+  }
+  /** An impact: ph runs 0 → 1 over its life. */
+  burst(i: number, x: number, y: number, size: number, color: [number, number, number], ph: number) {
+    const m = this.bursts[i]; if (!m) return;
+    m.visible = ph > 0 && ph < 1; if (!m.visible) return;
+    m.position.set(x, this.H - y, 0); m.scale.set(size, size, 1);
+    const u = m.material.uniforms; u.uPh.value = ph; u.uOp.value = 1; (u.uC.value as THREE.Vector3).set(...color);
+  }
+  clearAttacks() { this.beams.forEach((b) => (b.visible = false)); this.bursts.forEach((b) => (b.visible = false)); }
 
   render(t: number, s: { march: number; flash: number; clash: number; shake: number; wind: number }, c: Cam) {
     const b = this.bg.material.uniforms;
@@ -323,6 +421,7 @@ export class Field {
       f.fx.forEach((x) => (x.mesh.material.uniforms.uTime.value = t));
     }
     this.fogs.forEach((f, i) => { f.material.uniforms.uOp.value = this.fogOp[i] * c.fog; f.material.uniforms.uTime.value = t; f.material.uniforms.uOff.value = c.pan * (2 + i * 2.5); });
+    this.beams.forEach((b) => (b.material.uniforms.uTime.value = t));
     this.ash.material.uniforms.uTime.value = t; this.ash.material.uniforms.uWind.value = s.wind;
     // the camera: a push in about a chosen point
     const z = c.zoom, X = c.cx * this.W, Y = (1 - c.cy) * this.H;

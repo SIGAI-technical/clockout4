@@ -2,10 +2,10 @@
 
 import { useEffect, useRef } from "react";
 import { drumHit } from "@/lib/identScore";
-import { cue, setBed } from "@/lib/score";
+import { cue, setBed, setMusic } from "@/lib/score";
 import { createQuad } from "@/lib/gl";
 import { EVENT } from "@/config/event";
-import { TAKEOVER_FRAG } from "../takeover/takeoverShader";
+import { TAKEOVER_FRAG } from "./takeoverShader";
 import DoomFace from "./DoomFace";
 
 /* ── The opener: Doom takes the channel ────────────────────────────────────────────────────────────
@@ -50,7 +50,7 @@ export default function Opener() {
       const t = (now - t0) / 1000;
       const box = el.getBoundingClientRect();
       const target = cl(-box.top / Math.max(1, el.offsetHeight - innerHeight));
-      cur += (target - cur) * 0.12;
+      cur += (target - cur) * 0.3;
       if (Math.abs(target - cur) < 0.0002) cur = target;
       if (box.bottom < 0 || box.top > innerHeight) return;
       const p = cur, forward = target > cur - 0.001;
@@ -107,6 +107,7 @@ export default function Opener() {
       if (dive > 0.02 && !diveHit && forward) { diveHit = true; cue("riser"); }
       if (dive < 0.01) diveHit = false;
       setBed(0.35 + 0.4 * presence);
+      setMusic(dive * 0.6);   // the music comes up out of the dive
 
       if (quad) {
         quad.resize();

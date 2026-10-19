@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { EVENT } from "@/config/event";
 
-/** After the clash: questions, who to call, and the small print. */
+/** The end of the page: questions, who to call, Doom's last word, and the small print. */
 export function Aftermath() {
   const [open, setOpen] = useState(0);
   return (
@@ -32,6 +32,15 @@ export function Aftermath() {
               <li key={i}><strong>{c.name}</strong><a href={`tel:${c.phone.replace(/[^+\d]/g, "")}`}>{c.phone}</a></li>
             ))}
           </ul>
+        </div>
+      </div>
+      {/* the last word is Doom's */}
+      <div className="final">
+        <p className="final__line">The fourth floor awaits.</p>
+        <p className="final__sub">{EVENT.date} · {EVENT.venue}</p>
+        <div className="final__actions">
+          <a href="#register" className="final__cta">Register</a>
+          <a href={`https://instagram.com/${EVENT.instagram.replace(/^@/, "")}`} className="final__ig" target="_blank" rel="noopener noreferrer">@{EVENT.instagram.replace(/^@/, "")}</a>
         </div>
       </div>
       <footer className="foot">

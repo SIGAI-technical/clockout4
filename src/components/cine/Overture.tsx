@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { startAmbience, unlockAudio } from "@/lib/sfx";
 import { prefersReducedMotion } from "@/lib/gl";
+import { clipProgress, loadCastle, onClipProgress } from "@/lib/castleClips";
 import { identScoreReady, playIdentScore, preloadIdentScore, resumeAudio, startOmen, type Handle } from "@/lib/identScore";
 import DoomSilhouette from "./DoomSilhouette";
 import type { IdentAssets, IdentScene } from "./ident/IdentScene";
@@ -56,13 +57,21 @@ export default function Overture({ onDone }: { onDone: () => void }) {
     };
   }, []);
 
-  // the gate doubles as the preloader
+  // the gate doubles as the preloader: the intro's own assets, and the first stretch of the castle
+  // (the rest of the castle keeps arriving while the intro plays)
   useEffect(() => {
-    let live = true;
+    let live = true, intro = 0, introDone = false;
+    loadCastle();
+    const update = () => {
+      if (!live) return;
+      const castle = clipProgress(0);
+      setProgress(introDone && castle >= 1 ? 1 : Math.min(0.99, intro * 0.55 + castle * 0.45));
+    };
+    const off = onClipProgress(update);
     import("./ident/IdentScene").then(({ loadIdentAssets }) =>
-      loadIdentAssets((p) => { if (live) setProgress(p); }).then((a) => { if (live) { assets.current = a; setProgress(1); } }),
+      loadIdentAssets((p) => { intro = p; update(); }).then((a) => { if (live) { assets.current = a; intro = 1; introDone = true; update(); } }),
     );
-    return () => { live = false; };
+    return () => { live = false; off(); };
   }, []);
 
   useEffect(() => {

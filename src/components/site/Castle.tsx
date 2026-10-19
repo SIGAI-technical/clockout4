@@ -3,7 +3,8 @@
 import { useEffect, useRef } from "react";
 import { EVENT } from "@/config/event";
 import { drumHit } from "@/lib/identScore";
-import { cue, setBed } from "@/lib/score";
+import { cue, setBed, setMusic } from "@/lib/score";
+import { clipPath, clipUrl } from "@/lib/castleClips";
 
 /* ── Castle Doom ───────────────────────────────────────────────────────────────────────────────────
    One pinned stage; the scroll is the camera. Up the bridge to the gate (the event's name carved over
@@ -43,36 +44,21 @@ export default function Castle() {
   const blackRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
 
-  /* Loading the footage: phones get portrait-cropped 720p cuts (a third of the weight). Each clip is
-     downloaded whole, in the order they're seen, and played from memory — a scrubbed video never
-     "plays", so browsers (mobile Chrome especially) stop streaming it and seeks stall. Until a clip
-     is in, its poster stands in. The first tap also primes the videos, for iOS. */
+  /* The footage comes from the shared loader (lib/castleClips), which the intro gate already started:
+     phone-sized cuts on phones, whole clips played from memory, in the order they're seen. Until a
+     clip is in, its poster stands in. The first tap also primes the videos, for iOS. */
   useEffect(() => {
-    const phone = matchMedia("(max-aspect-ratio: 1/1), (max-width: 700px)").matches;
-    const vs = vids.current, urls: string[] = [];
-    const safari = /^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
+    const vs = vids.current;
     let alive = true;
-    LEGS.forEach((l, i) => { const v = vs[i]; if (v) v.poster = `/castle/${l.clip}${phone ? "_m" : ""}.jpg`; });
-    (async () => {
-      for (let i = 0; i < LEGS.length && alive; i++) {
-        const v = vs[i], url = `/castle/${LEGS[i].clip}${phone ? "_m" : ""}.mp4`;
-        if (!v) continue;
-        // Safari streams and seeks plain files well but won't play blob copies of them
-        if (safari) { v.preload = "auto"; v.src = url; v.load(); await new Promise((r) => { v.addEventListener("canplaythrough", r, { once: true }); setTimeout(r, 6000); }); continue; }
-        try {
-          const blob = await (await fetch(url)).blob();
-          if (!alive) return;
-          const u = URL.createObjectURL(blob); urls.push(u);
-          v.src = u;
-        } catch {
-          v.preload = "auto"; v.src = url;   // fall back to streaming
-        }
-        v.load();
-      }
-    })();
+    LEGS.forEach((l, i) => {
+      const v = vs[i];
+      if (!v) return;
+      v.poster = `${clipPath(l.clip)}.jpg`;
+      clipUrl(i).then((u) => { if (alive && u) { v.src = u; v.load(); } });
+    });
     const prime = () => vs.forEach((v) => { if (v?.src && v.paused) v.play().then(() => v.pause()).catch(() => {}); });
     addEventListener("pointerdown", prime, { once: true });
-    return () => { alive = false; removeEventListener("pointerdown", prime); urls.forEach((u) => URL.revokeObjectURL(u)); };
+    return () => { alive = false; removeEventListener("pointerdown", prime); };
   }, []);
 
   useEffect(() => {
@@ -83,7 +69,7 @@ export default function Castle() {
       raf = requestAnimationFrame(frame);
       const r = el.getBoundingClientRect();
       const target = cl(-r.top / Math.max(1, el.offsetHeight - innerHeight));
-      cur += (target - cur) * 0.1;
+      cur += (target - cur) * 0.3;
       if (Math.abs(target - cur) < 0.0002) cur = target;
       if (r.bottom < 0 || r.top > innerHeight) return;
       const p = cur, forward = target > cur - 0.001;
@@ -109,6 +95,7 @@ export default function Castle() {
       }
       // sound: the bed throughout; thunder as the lightning breaks over the gate; the doors' weight
       setBed(1);
+      setMusic(1);
       if (forward && prev < THUNDER_AT && p >= THUNDER_AT) cue("thunder");
       if (forward && prev < DOORS_AT && p >= DOORS_AT) cue("rumble");
       prev = p;

@@ -17,14 +17,14 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: "Clockout 4.0 — The Doom Takeover",
-  description:
-    "Doom has declared war on the fourth floor. Avengers, Fantastic Four, X-Men and Shang-Chi stand against him. Clockout 4.0 by SIGAI, AIML Department.",
+  description: "Doom has taken the AIML Department, and Clockout 4.0 is his tournament. By SIGAI, AIML Department.",
   openGraph: {
     title: "Clockout 4.0 — The Doom Takeover",
     description: "Doom has taken the AIML Department. Clockout 4.0 is his tournament.",
-    images: [{ url: "/cine/throne.jpg", width: 1280, height: 536, alt: "The throne of Doom" }],
+    type: "website",
+    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Doom's iron mask beside the title Clockout 4.0, The Doom Takeover" }],
   },
-  twitter: { card: "summary_large_image", images: ["/cine/throne.jpg"] },
+  twitter: { card: "summary_large_image", title: "Clockout 4.0 — The Doom Takeover", description: "Doom has taken the AIML Department.", images: ["/og.jpg"] },
 };
 
 export const viewport: Viewport = { themeColor: "#030504", width: "device-width", initialScale: 1 };

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { LEGS, THRONE_AT } from "./Castle";
+import { glideTo } from "@/lib/smooth";
 
 /* The journey's chapters, along the bottom: where you are, and a way to jump. Chapters inside the
    castle are points along its pinned scroll; the rest are ordinary sections. */
@@ -15,11 +16,17 @@ const CHAPTERS: Ch[] = [
   { label: "Questions", id: "faq" },
 ];
 
+// positions on the page (not offsetTop: the sections after the castle sit inside a positioned wrapper)
+const pageTop = (el: Element) => el.getBoundingClientRect().top + scrollY;
 const castleTop = (f: number) => {
   const el = document.getElementById("castle");
-  return el ? el.offsetTop + (el.offsetHeight - innerHeight) * f : 0;
+  return el ? pageTop(el) + (el.offsetHeight - innerHeight) * f : 0;
 };
-const topOf = (c: Ch) => (c.castle !== undefined ? castleTop(c.castle) : (document.getElementById(c.id!)?.offsetTop ?? 0));
+const topOf = (c: Ch) => {
+  if (c.castle !== undefined) return castleTop(c.castle);
+  const el = document.getElementById(c.id!);
+  return el ? pageTop(el) : 0;
+};
 
 export default function ChapterBar({ visible }: { visible: boolean }) {
   const [active, setActive] = useState(-1);
@@ -45,7 +52,7 @@ export default function ChapterBar({ visible }: { visible: boolean }) {
         {CHAPTERS.map((c, i) => (
           <li key={c.label}>
             <button type="button" className={i === active ? "is-active" : ""} aria-current={i === active ? "step" : undefined}
-              onClick={() => scrollTo({ top: topOf(c), behavior: "smooth" })}>
+              onClick={() => glideTo(topOf(c))}>
               {c.label}
             </button>
           </li>

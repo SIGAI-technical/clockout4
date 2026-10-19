@@ -7,12 +7,17 @@ import { isSfxMuted } from "./sfx";
 export type Cue = "hit" | "braam" | "boom" | "riser" | "thunder" | "rumble";
 const LEVEL: Record<Cue, number> = { hit: 1.1, braam: 1.6, boom: 0.75, riser: 0.9, thunder: 0.8, rumble: 0.9 };
 const BED_LEVEL = 1.5;   // the ambience file is mastered very quietly
+// The music (public/audio/5a.mp3) under the castle and what follows. Set to false to go without it.
+export const MUSIC_ON = true;
+const MUSIC_LEVEL = 0.32, MUSIC_XFADE = 4;
 
 let ctx: AudioContext | null = null;
 let master: GainNode | null = null;
 let bed: GainNode | null = null;
 let bedSrc: AudioBufferSourceNode | null = null;
 let bedTarget = 0;
+let music: GainNode | null = null;
+let musicTarget = 0;
 const buffers = new Map<string, AudioBuffer>();
 const loading = new Map<string, Promise<AudioBuffer | null>>();
 let unlocked = false;
@@ -27,12 +32,12 @@ function audioCtx(): AudioContext | null {
   return ctx;
 }
 
-function load(name: string): Promise<AudioBuffer | null> {
+function load(name: string, url = `/sfx/${name}.mp3`): Promise<AudioBuffer | null> {
   const c = audioCtx();
   if (!c) return Promise.resolve(null);
   if (buffers.has(name)) return Promise.resolve(buffers.get(name)!);
   if (!loading.has(name)) {
-    loading.set(name, fetch(`/sfx/${name}.mp3`).then((r) => r.arrayBuffer()).then((a) => c.decodeAudioData(a))
+    loading.set(name, fetch(url).then((r) => r.arrayBuffer()).then((a) => c.decodeAudioData(a))
       .then((b) => { buffers.set(name, b); return b; }).catch(() => null));
   }
   return loading.get(name)!;
@@ -49,6 +54,33 @@ function startBed() {
   });
 }
 
+/* The track fades in and out at its own ends, so it is looped with overlapping copies: each new one
+   starts MUSIC_XFADE seconds before the last finishes, ramping up as the other ramps down. */
+function startMusic() {
+  const c = audioCtx();
+  if (!c || music || !MUSIC_ON) return;
+  load("music", "/audio/5a.mp3").then((b) => {
+    if (!b || music || !master) return;
+    music = c.createGain(); music.gain.value = 0; music.connect(master);
+    const play = (at: number) => {
+      const g = c.createGain(); g.connect(music!);
+      g.gain.setValueAtTime(0, at); g.gain.linearRampToValueAtTime(1, at + MUSIC_XFADE);
+      g.gain.setValueAtTime(1, at + b.duration - MUSIC_XFADE); g.gain.linearRampToValueAtTime(0, at + b.duration);
+      const s = c.createBufferSource(); s.buffer = b; s.connect(g); s.start(at); s.onended = () => g.disconnect();
+      const next = at + b.duration - MUSIC_XFADE;
+      window.setTimeout(() => play(next), (next - c.currentTime - 1) * 1000);
+    };
+    play(c.currentTime + 0.05);
+    music.gain.setTargetAtTime(musicTarget, c.currentTime, 1.5);
+  });
+}
+
+/** How present the music is, 0…1 (it eases there). */
+export function setMusic(level: number) {
+  musicTarget = Math.max(0, level) * MUSIC_LEVEL;
+  if (ctx && music) music.gain.setTargetAtTime(musicTarget, ctx.currentTime, 1.2);
+}
+
 /** Called on the first tap/key: from here on the page can make sound. */
 export function unlockScore() {
   const c = audioCtx();
@@ -56,8 +88,9 @@ export function unlockScore() {
   if (c.state === "suspended") c.resume().catch(() => {});
   if (!unlocked) {
     unlocked = true;
-    (["hit", "braam", "boom", "riser", "thunder", "rumble"] as Cue[]).forEach(load);
+    (["hit", "braam", "boom", "riser", "thunder", "rumble"] as Cue[]).forEach((n) => load(n));
     startBed();
+    startMusic();
     listeners.forEach((f) => f());
   }
 }
@@ -77,6 +110,8 @@ export function setBed(level: number) {
 
 /** One cue, once. `v` scales its level. */
 export function cue(name: Cue, v = 1) {
+  const why = !unlocked ? "locked" : isSfxMuted() ? "muted" : !ctx || !master ? "no-ctx" : ctx.state !== "running" ? ctx.state : !buffers.get(name) ? "not-loaded" : "";
+  trace(name + (why ? ` (skipped: ${why})` : ""));
   if (!unlocked || isSfxMuted() || !ctx || !master || ctx.state !== "running") return;
   const b = buffers.get(name);
   if (!b) { load(name); return; }
@@ -88,4 +123,11 @@ export function cue(name: Cue, v = 1) {
 /** Follows the mute button. */
 export function setScoreMuted(m: boolean) {
   if (ctx && master) master.gain.setTargetAtTime(m ? 0 : 1, ctx.currentTime, 0.15);
+}
+
+// development only: a trail of cues, for checking the score without listening to it
+function trace(s: string) {
+  if (process.env.NODE_ENV === "production" || typeof window === "undefined") return;
+  const w = window as unknown as { __cues?: string[] };
+  (w.__cues ??= []).push(s);
 }

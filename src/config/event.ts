@@ -39,6 +39,9 @@ export const EVENT = {
     "[Rule four]",
   ],
 
+  // Instagram: the handle without "@" (shown in the closing section)
+  instagram: "[instagram handle]",
+
   contacts: [
     { name: "[Coordinator name]", phone: "[+91 00000 00000]" },
     { name: "[Coordinator name]", phone: "[+91 00000 00000]" },

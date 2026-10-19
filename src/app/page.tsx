@@ -7,15 +7,17 @@ import Castle from "@/components/site/Castle";
 import SoundHint from "@/components/site/SoundHint";
 import Site from "@/components/site/Site";
 import ChapterBar from "@/components/site/ChapterBar";
-import { Aftermath, TopBar } from "@/components/battle/Aftermath";
+import { Aftermath, TopBar } from "@/components/site/Aftermath";
 import { setSfxMuted } from "@/lib/sfx";
 import { lockScroll } from "@/lib/scrollLock";
 import { setScoreMuted } from "@/lib/score";
+import { glideTo, startSmooth } from "@/lib/smooth";
 
 export default function Home() {
   const [entered, setEntered] = useState(false);
   const [muted, setMuted] = useState(false);
 
+  useEffect(() => { startSmooth(); }, []);
   useEffect(() => {
     const id = requestAnimationFrame(() => {
       try { if (localStorage.getItem("co4-muted") === "1") setMuted(true); } catch { /* ignore */ }
@@ -32,8 +34,8 @@ export default function Home() {
     if (!entered) return lockScroll();
   }, [entered]);
 
-  const onDone = useCallback(() => { window.scrollTo(0, 0); setEntered(true); }, []);
-  const register = useCallback(() => document.getElementById("register")?.scrollIntoView({ behavior: "smooth" }), []);
+  const onDone = useCallback(() => { glideTo(0, true); setEntered(true); }, []);
+  const register = useCallback(() => { const el = document.getElementById("register"); if (el) glideTo(el); }, []);
 
   return (
     <>

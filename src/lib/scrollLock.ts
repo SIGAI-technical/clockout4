@@ -1,6 +1,9 @@
+import { pauseSmooth, resumeSmooth } from "./smooth";
+
 /** Hold the page still: no wheel, touch or keyboard scrolling until the returned function is called.
  *  Buttons and links keep their keys, so the page stays usable from the keyboard. */
 export function lockScroll(): () => void {
+  pauseSmooth();
   const html = document.documentElement;
   const prev = html.style.overflow;
   html.style.overflow = "hidden";
@@ -13,6 +16,7 @@ export function lockScroll(): () => void {
   addEventListener("touchmove", stop, { passive: false });
   addEventListener("keydown", keys);
   return () => {
+    resumeSmooth();
     html.style.overflow = prev;
     removeEventListener("wheel", stop);
     removeEventListener("touchmove", stop);

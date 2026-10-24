@@ -138,8 +138,9 @@ export default function Overture({ onDone }: { onDone: () => void }) {
           <DoomSilhouette />
           <div className="gate__inner">
             <p className="t-track gate__pre">SIGAI · AIML Department</p>
-            <h1 className="gate__title">The throne <em>is waiting.</em></h1>
-            <p className="gate__lede">Clockout 4.0 opens with a short film. Sound up. Doom does not repeat himself.</p>
+            <h1 className="gate__title">The multiverse <em>has a new ruler.</em></h1>
+            <p className="gate__lede">The clock is ticking. The trials are waiting. And Doom has already made his move.</p>
+            <p className="t-track gate__tag">Clockout 4.0 · The Doom Takeover</p>
             <button type="button" className={`gate__enter ${ready ? "is-ready" : ""}`} onClick={enter} aria-disabled={!ready} style={{ ["--p" as string]: progress }}>
               <span className="gate__fill" aria-hidden="true" />
               <span className="gate__label">{ready ? "Enter" : `Preparing · ${Math.round(progress * 100)}%`}</span>

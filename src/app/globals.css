@@ -97,7 +97,8 @@ img, video, canvas { display: block; max-width: 100%; }
   font-size: clamp(42px, 6vw, 84px); line-height: .98; color: #eef5f1; letter-spacing: -.01em;
 }
 .gate__title em { font-style: italic; color: #bff5d6; }
-.gate__lede { margin: 0 0 38px; color: rgba(225,236,229,.72); font-size: clamp(15px, 1.25vw, 17px); line-height: 1.6; max-width: 46ch; }
+.gate__lede { margin: 0 0 18px; color: rgba(225,236,229,.72); font-size: clamp(15px, 1.25vw, 17px); line-height: 1.6; max-width: 46ch; }
+.gate__tag { margin: 0 0 34px; }
 .gate__enter {
   position: relative; overflow: hidden; min-width: 220px; padding: 17px 34px; border-radius: 999px;
   border: 1px solid rgba(160,240,195,.28); background: rgba(6,24,15,.55); backdrop-filter: blur(6px);
@@ -266,7 +267,7 @@ img, video, canvas { display: block; max-width: 100%; }
 .tk__doom { position: absolute; inset: 0; z-index: 5; pointer-events: none; overflow: hidden; mix-blend-mode: screen; --presence: 0; --eyes: 0; --push: 1; }
 /* his words, low and centred over him */
 .tk__speech { position: absolute; left: 0; right: 0; bottom: 13vh; z-index: 7; text-align: center; padding: 0 var(--gutter); pointer-events: none; display: grid; justify-items: center; }
-.tk__say { margin: 0; }
+.tk__say { margin: 0; grid-column: 1; align-self: start; }
 .tk__say--voice { font-family: var(--f-voice); font-style: italic; font-size: clamp(22px, 2.3vw, 34px); color: var(--pale); text-shadow: 0 2px 20px #000; }
 .tk__say--big { margin-top: 10px; font-size: clamp(40px, 5vw, 80px); line-height: .95; }
 .tk__say--huge { margin-top: 12px; font-size: clamp(54px, 8vw, 132px); line-height: .9; }
@@ -419,7 +420,7 @@ html[data-side="resist"] { --venom: #a3b9cc; --acc: #a3b9cc; --acc-rgb: 163, 185
 /* castle */
 .castle__title { top: 34%; }
 .castle__title h2 { margin: 0 0 14px; font-family: var(--f-decree), serif; font-weight: 500; font-size: clamp(40px, 6.4vw, 104px); line-height: 1; letter-spacing: .08em; color: var(--bone2); text-shadow: 0 4px 40px rgba(0,0,0,.8); }
-.castle__title h2 span { font-size: .4em; letter-spacing: .1em; vertical-align: .9em; color: var(--dim); }
+.castle__title h2 span { color: var(--bone2); }
 .castle__title p { margin: 0; font-family: var(--f-sans); font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: rgba(236,230,216,.7); text-shadow: 0 2px 16px #000; }
 .passing { position: absolute; top: 60%; z-index: 3; width: min(360px, 70vw); display: grid; gap: 10px; pointer-events: none; text-shadow: 0 2px 24px rgba(0,0,0,.9), 0 0 2px #000; }
 .passing--l { left: calc(var(--gutter) + 3vw); transform-origin: 0 50%; }
@@ -443,20 +444,25 @@ html[data-side="resist"] { --venom: #a3b9cc; --acc: #a3b9cc; --acc-rgb: 163, 185
 .count div { display: grid; gap: 6px; padding: 18px 0 16px; border-bottom: 1px solid var(--hair); }
 .count b { font-family: var(--f-decree), serif; font-weight: 500; font-size: clamp(30px, 3vw, 46px); line-height: 1; color: var(--bone2); font-variant-numeric: tabular-nums; }
 .trials2 { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px, 3vw, 44px); }
-.trials2 li { border-top: 1px solid var(--hair); padding-top: 22px; }
+/* each card shares the list's rows, so titles, descriptions and figures line up across the three */
+.trials2 li { border-top: 1px solid var(--hair); padding-top: 22px; display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: 0; align-content: start; }
 .trials2__n { font-family: var(--f-decree), serif; font-size: 13px; letter-spacing: .14em; color: var(--acc); }
 .trials2 h4 { margin: 10px 0 10px; font-family: var(--f-decree), serif; font-weight: 500; font-size: clamp(21px, 1.9vw, 27px); color: var(--bone2); }
 .trials2 p { margin: 0 0 20px; color: var(--dim); }
-.trials2 dl { margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.trials2 dl { margin: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 .trials2 dd { margin: 4px 0 0; color: var(--bone2); font-size: 15px; }
 .split { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(30px, 6vw, 90px); }
 .pool { margin: 0 0 20px; font-family: var(--f-decree), serif; font-weight: 500; font-size: clamp(38px, 4.4vw, 66px); line-height: 1.05; color: var(--bone2); }
 .rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--hair); }
 .rows li { display: flex; justify-content: space-between; gap: 20px; padding: 14px 0; border-bottom: 1px solid var(--hair); }
-.rows li span:last-child { color: var(--bone2); letter-spacing: .1em; }
+.rows li { align-items: baseline; }
+.rows li span:last-child { font-family: var(--f-decree), serif; font-size: 20px; letter-spacing: .04em; text-transform: none; color: var(--bone2); }
 .rules { margin: 0 0 30px; padding: 0; list-style: none; counter-reset: r; border-top: 1px solid var(--hair); }
 .rules li { counter-increment: r; display: grid; grid-template-columns: 44px 1fr; padding: 14px 0; border-bottom: 1px solid var(--hair); color: var(--bone2); }
 .rules li::before { content: counter(r, upper-roman); font-family: var(--f-decree), serif; font-size: 13px; color: var(--acc); padding-top: 3px; }
+.rules strong { font-weight: 600; }
+.coda { margin: 22px 0 0; font-family: var(--f-voice); font-style: italic; font-size: 20px; color: rgba(236,230,216,.75); }
+.coda--rules { margin: 0 0 30px; }
 .facts--one { grid-template-columns: 1fr; }
 @media (max-width: 860px) {
   .when, .split, .trials2 { grid-template-columns: 1fr; }
@@ -468,6 +474,8 @@ html[data-side="resist"] { --venom: #a3b9cc; --acc: #a3b9cc; --acc-rgb: 163, 185
 .form-frame__empty { height: 100%; display: grid; place-content: center; gap: 10px; padding: 24px; text-align: center; color: #2a2f2c; }
 .form-frame__empty strong { font-family: var(--f-decree), serif; font-weight: 500; font-size: 22px; letter-spacing: .08em; }
 .form-frame__empty span { font-size: 14px; max-width: 40ch; }
+.form-alt { margin: 16px 0 0; font-size: 14px; color: var(--dim); }
+.form-alt a { display: inline-block; padding: 8px 0; color: var(--bone2); text-underline-offset: 3px; }
 .site [data-reveal] { transform: translateY(18px); }
 /* questions */
 .after { background: #050605 !important; border-top: 1px solid var(--hair); }
@@ -518,6 +526,8 @@ html.lenis, html.lenis body { height: auto; }
 /* Doom's last word, before the small print */
 .final { max-width: 980px; margin: clamp(90px, 14vh, 150px) auto 0; padding: clamp(60px, 10vh, 100px) 0 0; border-top: 1px solid var(--hair); text-align: center; display: grid; justify-items: center; gap: 14px; }
 .final__line { margin: 0; font-family: var(--f-decree), serif; font-weight: 500; font-size: clamp(34px, 5vw, 76px); line-height: 1.02; letter-spacing: .03em; color: var(--bone2); }
+.final__pre, .final__ask { margin: 0; font-family: var(--f-voice); font-style: italic; font-size: clamp(20px, 2vw, 28px); color: rgba(236,230,216,.8); }
+.final__ask { margin-bottom: 10px; }
 .final__sub { margin: 0; font-family: var(--f-sans); font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: var(--dim); }
 .final__actions { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 18px 28px; margin-top: 22px; }
 .final__cta { padding: 15px 34px; border: 1px solid rgba(236,230,216,.5); color: var(--bone2); text-decoration: none; font-family: var(--f-sans); font-size: 11px; font-weight: 500; letter-spacing: .3em; text-transform: uppercase; transition: border-color .3s, background .3s; }
@@ -526,3 +536,13 @@ html.lenis, html.lenis body { height: auto; }
 .final__ig:hover { color: var(--bone2); }
 .world .foot { position: relative; z-index: 1; }
 .world .foot { padding-bottom: 72px; }
+/* phones: no chapter bar (six chapters don't fit, and scrolling is the way through); the top bar
+   gets a solid backing so the page doesn't show through the logo */
+@media (max-width: 720px) {
+  .chapters { display: none; }
+  .topbar { padding-top: 10px; padding-bottom: 10px; background: rgba(3,4,3,.88); backdrop-filter: blur(10px); border-bottom: 1px solid var(--hair); }
+  .world .foot { padding-bottom: 40px; }
+}
+/* the castle starts pinned over the opener's last screen (already black from the dive), so there is no
+   screen of plain black to scroll through between them */
+.tk--opener + .castle { margin-top: -100vh; margin-top: -100svh; }

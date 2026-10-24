@@ -27,12 +27,12 @@ function Countdown() {
 
 export default function Site() {
   const root = useRef<HTMLDivElement>(null);
+  const embed = formEmbedUrl();
   useEffect(() => {
     const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); } }), { rootMargin: "0px 0px -10% 0px" });
     root.current?.querySelectorAll("[data-reveal]").forEach((n) => io.observe(n));
     return () => io.disconnect();
   }, []);
-  const embed = formEmbedUrl();
 
   return (
     <div ref={root} className="site">
@@ -40,14 +40,14 @@ export default function Site() {
         <div className="wrap">
           <header className="head" data-reveal>
             <p className="label">{EVENT.name} {EVENT.edition}</p>
-            <h2 id="details-title" className="display">Your orders</h2>
+            <h2 id="details-title" className="display">Three trials. One chance to make history.</h2>
           </header>
 
           <div className="when" data-reveal>
             <dl className="facts">
               <div><dt>Date</dt><dd>{EVENT.date}</dd></div>
               <div><dt>Time</dt><dd>{EVENT.time}</dd></div>
-              <div><dt>Report by</dt><dd>{EVENT.reporting}</dd></div>
+              <div><dt>Reporting by</dt><dd>{EVENT.reporting}</dd></div>
               <div><dt>Venue</dt><dd>{EVENT.venue}</dd></div>
             </dl>
             <Countdown />
@@ -60,7 +60,7 @@ export default function Site() {
                 <span className="trials2__n">{ROMAN[i]}</span>
                 <h4>{t.name}</h4>
                 <p>{t.line}</p>
-                <dl><div><dt>Team</dt><dd>{t.team}</dd></div><div><dt>Duration</dt><dd>{t.duration}</dd></div><div><dt>Prize</dt><dd>{t.prize}</dd></div></dl>
+                <dl><div><dt>Teams</dt><dd>{t.teams}</dd></div><div><dt>Duration</dt><dd>{t.duration}</dd></div></dl>
               </li>
             ))}
           </ol>
@@ -69,14 +69,15 @@ export default function Site() {
             <div id="spoils" data-reveal>
               <h3 className="sub">Prizes</h3>
               <p className="pool">{EVENT.prizePool}</p>
-              <ul className="rows">{EVENT.trials.map((t, i) => <li key={i}><span>{t.name}</span><span>{t.prize}</span></li>)}</ul>
+              <ul className="rows">{EVENT.prizes.map((p) => <li key={p.place}><span>{p.place}</span><span>{p.amount}</span></li>)}</ul>
+              <p className="coda">Survive the takeover. Claim your glory.</p>
             </div>
             <div id="terms" data-reveal>
               <h3 className="sub">Rules</h3>
-              <ol className="rules">{EVENT.rules.map((r, i) => <li key={i}>{r}</li>)}</ol>
+              <ol className="rules">{EVENT.rules.map((r) => <li key={r.t}><span><strong>{r.t}:</strong> {r.d}</span></li>)}</ol>
+              <p className="coda coda--rules">Doom sets the trials. Your actions decide your fate.</p>
               <dl className="facts facts--one">
                 <div><dt>Who can enter</dt><dd>{EVENT.eligibility}</dd></div>
-                <div><dt>Fee</dt><dd>{EVENT.fee}</dd></div>
                 <div><dt>Registration closes</dt><dd>{EVENT.deadline}</dd></div>
               </dl>
             </div>
@@ -100,6 +101,7 @@ export default function Site() {
               </div>
             )}
           </div>
+          <p className="form-alt">Form not loading? <a href={EVENT.googleForm} target="_blank" rel="noopener noreferrer">Open it in a new tab</a></p>
         </div>
       </section>
     </div>

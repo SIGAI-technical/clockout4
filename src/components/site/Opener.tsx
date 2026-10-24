@@ -14,14 +14,14 @@ import DoomFace from "./DoomFace";
 const EYES_AT = 0.29;
 type Line = [number, number, string, "voice" | "big" | "huge"];
 const SPEECH: Line[] = [
-  [0.33, 0.43, "Do not look away.", "voice"],
-  [0.46, 0.72, "Students of the AIML Department.", "voice"],
-  [0.51, 0.72, "Your Clockout is over.", "voice"],
-  [0.57, 0.72, "Doom’s begins.", "huge"],
+  [0.33, 0.43, "The gates have opened.", "voice"],
+  [0.36, 0.43, "The multiverse is at risk.", "voice"],
+  [0.47, 0.72, "Do you have what it takes to survive?", "voice"],
+  [0.55, 0.72, "Doom awaits.", "huge"],
 ];
 // after his last word the camera goes into the dark of the hood until there is nothing but black;
 // the castle comes up out of that black
-const DIVE: [number, number] = [0.72, 0.97];
+const DIVE: [number, number] = [0.72, 0.9];
 
 const cl = (x: number) => Math.min(1, Math.max(0, x));
 const sm = (x: number) => { x = cl(x); return x * x * (3 - 2 * x); };
@@ -89,7 +89,7 @@ export default function Opener() {
         if (w === "huge" && p > a && p < a + 0.04) shake = Math.max(shake, 1 - (p - a) / 0.04);
       });
       if (hintRef.current) hintRef.current.style.opacity = String(1 - sm(p / 0.04));
-      if (blackRef.current) blackRef.current.style.opacity = String(sm((p - DIVE[1] + 0.1) / 0.08));
+      if (blackRef.current) blackRef.current.style.opacity = String(sm((p - DIVE[1] + 0.07) / 0.06));
 
       if (stageRef.current) {
         const s = Math.min(1.4, shake);
@@ -135,7 +135,7 @@ export default function Opener() {
         <h1 className="sr-only">{EVENT.name} {EVENT.edition}: {EVENT.title}. {EVENT.host}.</h1>
         <div className="tk__speech" aria-hidden="true">
           {SPEECH.map(([, , text, w], i) => (
-            <p key={i} ref={(n) => { speech.current[i] = n; }} className={`tk__say tk__say--${w}`} style={{ opacity: 0 }}>{text}</p>
+            <p key={i} ref={(n) => { speech.current[i] = n; }} className={`tk__say tk__say--${w}`} style={{ opacity: 0, gridRow: (i % 2) + 1 }}>{text}</p>
           ))}
         </div>
         <div ref={hintRef} className="saga__hint" aria-hidden="true"><span>Scroll</span><i /></div>

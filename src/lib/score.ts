@@ -8,8 +8,10 @@ export type Cue = "hit" | "braam" | "boom" | "riser" | "thunder" | "rumble";
 const LEVEL: Record<Cue, number> = { hit: 1.1, braam: 1.6, boom: 0.75, riser: 0.9, thunder: 0.8, rumble: 0.9 };
 const BED_LEVEL = 1.5;   // the ambience file is mastered very quietly
 // The music (public/audio/5a.mp3) under the castle and what follows. Set to false to go without it.
+// Its first LINE_END seconds are Doom's "For I am Doom", played once in the throne room; the rest is
+// the theme, which is what loops.
 export const MUSIC_ON = true;
-const MUSIC_LEVEL = 0.32, MUSIC_XFADE = 4;
+const MUSIC_LEVEL = 0.32, MUSIC_XFADE = 4, LINE_END = 11, LINE_LEVEL = 0.6;
 
 let ctx: AudioContext | null = null;
 let master: GainNode | null = null;
@@ -18,6 +20,8 @@ let bedSrc: AudioBufferSourceNode | null = null;
 let bedTarget = 0;
 let music: GainNode | null = null;
 let musicTarget = 0;
+let duck: GainNode | null = null;
+let linePlayed = false;
 const buffers = new Map<string, AudioBuffer>();
 const loading = new Map<string, Promise<AudioBuffer | null>>();
 let unlocked = false;
@@ -54,20 +58,22 @@ function startBed() {
   });
 }
 
-/* The track fades in and out at its own ends, so it is looped with overlapping copies: each new one
-   starts MUSIC_XFADE seconds before the last finishes, ramping up as the other ramps down. */
+/* The theme fades out at its end, so it is looped with overlapping copies: each new one starts
+   MUSIC_XFADE seconds before the last finishes, ramping up as the other ramps down. */
 function startMusic() {
   const c = audioCtx();
   if (!c || music || !MUSIC_ON) return;
   load("music", "/audio/5a.mp3").then((b) => {
     if (!b || music || !master) return;
-    music = c.createGain(); music.gain.value = 0; music.connect(master);
+    duck = c.createGain(); duck.connect(master);
+    music = c.createGain(); music.gain.value = 0; music.connect(duck);
+    const len = b.duration - LINE_END;
     const play = (at: number) => {
       const g = c.createGain(); g.connect(music!);
       g.gain.setValueAtTime(0, at); g.gain.linearRampToValueAtTime(1, at + MUSIC_XFADE);
-      g.gain.setValueAtTime(1, at + b.duration - MUSIC_XFADE); g.gain.linearRampToValueAtTime(0, at + b.duration);
-      const s = c.createBufferSource(); s.buffer = b; s.connect(g); s.start(at); s.onended = () => g.disconnect();
-      const next = at + b.duration - MUSIC_XFADE;
+      g.gain.setValueAtTime(1, at + len - MUSIC_XFADE); g.gain.linearRampToValueAtTime(0, at + len);
+      const s = c.createBufferSource(); s.buffer = b; s.connect(g); s.start(at, LINE_END, len); s.onended = () => g.disconnect();
+      const next = at + len - MUSIC_XFADE;
       window.setTimeout(() => play(next), (next - c.currentTime - 1) * 1000);
     };
     play(c.currentTime + 0.05);
@@ -79,6 +85,20 @@ function startMusic() {
 export function setMusic(level: number) {
   musicTarget = Math.max(0, level) * MUSIC_LEVEL;
   if (ctx && music) music.gain.setTargetAtTime(musicTarget, ctx.currentTime, 1.2);
+}
+
+/** "For I am Doom": once per visit, with the theme ducked underneath it. */
+export function doomLine() {
+  if (linePlayed || !unlocked || isSfxMuted() || !ctx || !master || !duck || ctx.state !== "running") return;
+  const b = buffers.get("music");
+  if (!b) return;
+  linePlayed = true;
+  const t = ctx.currentTime;
+  const g = ctx.createGain(); g.gain.value = LINE_LEVEL; g.connect(master);
+  g.gain.setValueAtTime(LINE_LEVEL, t + LINE_END - 0.6); g.gain.linearRampToValueAtTime(0, t + LINE_END);
+  const s = ctx.createBufferSource(); s.buffer = b; s.connect(g); s.start(t, 0, LINE_END); s.onended = () => g.disconnect();
+  duck.gain.setTargetAtTime(0.2, t, 0.3);
+  duck.gain.setTargetAtTime(1, t + LINE_END - 1.5, 1);
 }
 
 /** Called on the first tap/key: from here on the page can make sound. */

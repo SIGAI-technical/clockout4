@@ -36,8 +36,10 @@ export function Aftermath() {
       </div>
       {/* the last word is Doom's */}
       <div className="final">
-        <p className="final__line">The fourth floor awaits.</p>
-        <p className="final__sub">{EVENT.date} · {EVENT.venue}</p>
+        <p className="final__pre">You’ve made it this far.</p>
+        <p className="final__line">Now face the Doom.</p>
+        <p className="final__ask">Will you answer the call?</p>
+        <p className="final__sub">30 Oct ’26 · The Fourth Floor · AIML Department · DJSCE</p>
         <div className="final__actions">
           <a href="#register" className="final__cta">Register</a>
           <a href={`https://instagram.com/${EVENT.instagram.replace(/^@/, "")}`} className="final__ig" target="_blank" rel="noopener noreferrer">@{EVENT.instagram.replace(/^@/, "")}</a>

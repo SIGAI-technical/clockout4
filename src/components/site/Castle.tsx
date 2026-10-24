@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { EVENT } from "@/config/event";
 import { drumHit } from "@/lib/identScore";
-import { cue, setBed, setMusic } from "@/lib/score";
+import { cue, doomLine, setBed, setMusic } from "@/lib/score";
 import { clipPath, clipUrl } from "@/lib/castleClips";
 
 /* ── Castle Doom ───────────────────────────────────────────────────────────────────────────────────
@@ -19,16 +19,18 @@ export const LEGS: Leg[] = [
 export const THRONE_AT = 0.7;
 // where the story's sounds fall along the way: lightning over the gate, the doors giving way
 const THUNDER_AT = 0.06, DOORS_AT = 0.22;
+// how present the theme stays under the rest of the site, after the castle
+const THEME_BELOW = 0.5;
 
 const BANNERS = [
-  { k: "The day", v: EVENT.date, sub: "" },
-  { k: "The hour", v: EVENT.time, sub: `Report by ${EVENT.reporting}` },
-  { k: "The ground", v: EVENT.venue, sub: "" },
+  { k: "The day", v: EVENT.date, sub: "The countdown begins" },
+  { k: "The hour", v: EVENT.time, sub: `Reporting time ${EVENT.reporting}` },
+  { k: "The arena", v: EVENT.venue, sub: "" },
 ];
 const BANNER_AT = (i: number) => 0.355 + i * 0.09;
 const THRONE_LINES: [number, number, string][] = [
-  [0.76, 0.88, "Few are summoned."],
-  [0.87, 0.985, "You have been."],
+  [0.76, 0.88, "The throne is mine."],
+  [0.87, 0.985, "Your fate is yours to challenge."],
 ];
 
 const cl = (x: number) => Math.min(1, Math.max(0, x));
@@ -71,7 +73,12 @@ export default function Castle() {
       const target = cl(-r.top / Math.max(1, el.offsetHeight - innerHeight));
       cur += (target - cur) * 0.3;
       if (Math.abs(target - cur) < 0.0002) cur = target;
-      if (r.bottom < 0 || r.top > innerHeight) return;
+      // below the castle the page is for reading: the ambience goes, the theme stays, softer
+      if (r.bottom < 0) { setBed(0); setMusic(THEME_BELOW); return; }
+      // the castle overlaps the opener's last screen: until it is pinned it stays invisible, so it never
+      // slides up over Doom; by the time it pins, the opener has gone to black and the swap can't be seen
+      if (stageRef.current && r.top > 0.5) stageRef.current.style.opacity = "0";
+      if (r.top > 0.5) return;
       const p = cur, forward = target > cur - 0.001;
 
       // the camera: whichever leg we are on scrubs its clip; the cut between legs passes through dark
@@ -90,12 +97,13 @@ export default function Castle() {
         }
       });
       if (leg !== lastLeg) {
-        if (lastLeg >= 0 && forward) { drumHit(0.8, true); if (leg === 2) cue("braam", 0.7); }
+        if (lastLeg >= 0 && forward) { drumHit(0.8, true); if (leg === 2) doomLine(); }
         lastLeg = leg;
       }
       // sound: the bed throughout; thunder as the lightning breaks over the gate; the doors' weight
-      setBed(1);
-      setMusic(1);
+      const hush = 1 - sm((p - 0.9) / 0.1);
+      setBed(hush);
+      setMusic(THEME_BELOW + (1 - THEME_BELOW) * hush);
       if (forward && prev < THUNDER_AT && p >= THUNDER_AT) cue("thunder");
       if (forward && prev < DOORS_AT && p >= DOORS_AT) cue("rumble");
       prev = p;
@@ -139,7 +147,7 @@ export default function Castle() {
         n.style.opacity = String(o); n.style.filter = `blur(${(1 - o) * 8}px)`;
         if (o > 0.5) line = i;
       });
-      if (line !== lastLine) { if (forward && line === 1) { cue("boom", 0.6); drumHit(1, true); } lastLine = line; }
+      if (line !== lastLine) { if (forward && line === 0) { cue("boom", 0.6); drumHit(1, true); } lastLine = line; }
     };
     raf = requestAnimationFrame(frame);
     return () => cancelAnimationFrame(raf);
@@ -147,7 +155,7 @@ export default function Castle() {
 
   return (
     <section ref={root} id="castle" className="castle" aria-label="Castle Doom">
-      <div ref={stageRef} className="castle__stage">
+      <div ref={stageRef} className="castle__stage" style={{ opacity: 0 }}>
         {LEGS.map((l, i) => (
           <video key={l.id} ref={(n) => { vids.current[i] = n; }} className="castle__film"
             muted playsInline preload="none" disablePictureInPicture aria-hidden="true" style={{ opacity: i === 0 ? 1 : 0 }} />
@@ -171,7 +179,7 @@ export default function Castle() {
         <dl className="sr-only">{BANNERS.map((b) => <div key={b.k}><dt>{b.k}</dt><dd>{b.v}. {b.sub}.</dd></div>)}</dl>
 
         <div className="castle__lines" aria-hidden="true">
-          {THRONE_LINES.map(([, , t], i) => <p key={i} ref={(n) => { lines.current[i] = n; }} className={i === 1 ? "castle__line--big" : ""} style={{ opacity: 0 }}>{t}</p>)}
+          {THRONE_LINES.map(([, , t], i) => <p key={i} ref={(n) => { lines.current[i] = n; }} className={i === 0 ? "castle__line--big" : ""} style={{ opacity: 0 }}>{t}</p>)}
         </div>
 
       </div>

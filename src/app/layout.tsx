@@ -5,7 +5,7 @@ import "./globals.css";
 const anton = Anton({ variable: "--f-logo", subsets: ["latin"], weight: "400", display: "swap" });
 const archivo = Archivo({ variable: "--f-sans", subsets: ["latin"], axes: ["wdth"], display: "swap" });
 // Doom's voice in stone and iron: Roman inscriptional capitals
-const cinzel = Cinzel({ variable: "--f-decree", subsets: ["latin"], weight: ["500", "700", "900"], display: "swap" });
+const cinzel = Cinzel({ variable: "--f-decree", subsets: ["latin"], display: "swap" });
 const cormorant = Cormorant_Garamond({
   variable: "--f-voice",
   subsets: ["latin"],
@@ -15,9 +15,9 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://clockout.djscesigai.tech"),
   title: "Clockout 4.0 — The Doom Takeover",
-  description: "Doom has taken the AIML Department, and Clockout 4.0 is his tournament. By SIGAI, AIML Department.",
+  description: "The multiverse has a new ruler. Three trials, ₹50,000+ in prizes. 30 October 2026, 4th Floor, AIML Department. By SIGAI.",
   openGraph: {
     title: "Clockout 4.0 — The Doom Takeover",
     description: "Doom has taken the AIML Department. Clockout 4.0 is his tournament.",

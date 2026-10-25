@@ -42,7 +42,7 @@ export default function Opener() {
     const quad = createQuad(cv.current!, TAKEOVER_FRAG, 1.25);
     const onResize = () => quad?.resize();
     onResize(); addEventListener("resize", onResize);
-    let raf = 0, cur = 0, last = "", eyesHit = false, diveHit = false, hijackHit = false;
+    let raf = 0, cur = 0, last = "", eyesHit = false, hijackHit = false;
     const t0 = performance.now();
 
     const frame = (now: number) => {
@@ -96,7 +96,7 @@ export default function Opener() {
         stageRef.current.style.transform = s > 0.01 ? `translate(${(Math.random() - 0.5) * 14 * s}px, ${(Math.random() - 0.5) * 10 * s}px)` : "";
       }
 
-      // sound: the hijack hits, his last word lands like a door, the dive rises into the dark
+      // sound: the hijack hits, his last word lands like a door, the dive goes into the dark on the music alone
       if (beat !== last) {
         if (forward && beat === "say3") { cue("boom", 0.9); drumHit(1, true); }
         else if (forward && beat.startsWith("say") && beat !== "say0") drumHit(0.5);
@@ -104,8 +104,6 @@ export default function Opener() {
       }
       if (p > 0.08 && !hijackHit && forward) { hijackHit = true; cue("hit", 0.8); }
       if (p < 0.06) hijackHit = false;
-      if (dive > 0.02 && !diveHit && forward) { diveHit = true; cue("riser"); }
-      if (dive < 0.01) diveHit = false;
       setBed(0.35 + 0.4 * presence);
       setMusic(dive * 0.6);   // the music comes up out of the dive
 

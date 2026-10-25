@@ -6,15 +6,18 @@ import { glideTo } from "@/lib/smooth";
 
 /* The journey's chapters, along the bottom: where you are, and a way to jump. Chapters inside the
    castle are points along its pinned scroll; the rest are ordinary sections. */
-type Ch = { label: string; castle?: number; id?: string };
+// On phones the three castle chapters fold into one ("Castle"): `short` is the phone label, and
+// `inner` marks the chapters that are hidden there.
+type Ch = { label: string; short?: string; inner?: boolean; castle?: number; id?: string };
 const CHAPTERS: Ch[] = [
-  { label: "The gate", castle: LEGS[0].a },
-  { label: "The hall", castle: LEGS[1].a + 0.01 },
-  { label: "The throne", castle: THRONE_AT },
+  { label: "The gate", short: "Castle", castle: LEGS[0].a },
+  { label: "The hall", inner: true, castle: LEGS[1].a + 0.01 },
+  { label: "The throne", inner: true, castle: THRONE_AT },
   { label: "Details", id: "details" },
   { label: "Register", id: "register" },
-  { label: "Questions", id: "faq" },
+  { label: "Questions", short: "FAQ", id: "faq" },
 ];
+const IN_CASTLE = (a: number) => a >= 0 && CHAPTERS[a]?.castle !== undefined;
 
 // positions on the page (not offsetTop: the sections after the castle sit inside a positioned wrapper)
 const pageTop = (el: Element) => el.getBoundingClientRect().top + scrollY;
@@ -50,10 +53,10 @@ export default function ChapterBar({ visible }: { visible: boolean }) {
       <span className="chapters__prog" style={{ transform: `scaleX(${prog})` }} aria-hidden="true" />
       <ol>
         {CHAPTERS.map((c, i) => (
-          <li key={c.label}>
-            <button type="button" className={i === active ? "is-active" : ""} aria-current={i === active ? "step" : undefined}
-              onClick={() => glideTo(topOf(c))}>
-              {c.label}
+          <li key={c.label} className={c.inner ? "chapters__inner" : undefined}>
+            <button type="button" className={`${i === active ? "is-active" : ""} ${i === 0 && IN_CASTLE(active) ? "in-castle" : ""}`}
+              aria-current={i === active ? "step" : undefined} onClick={() => glideTo(topOf(c))}>
+              {c.short ? <><span className="chapters__long">{c.label}</span><span className="chapters__short">{c.short}</span></> : c.label}
             </button>
           </li>
         ))}

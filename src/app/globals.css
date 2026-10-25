@@ -536,12 +536,16 @@ html.lenis, html.lenis body { height: auto; }
 .final__ig:hover { color: var(--bone2); }
 .world .foot { position: relative; z-index: 1; }
 .world .foot { padding-bottom: 72px; }
-/* phones: no chapter bar (six chapters don't fit, and scrolling is the way through); the top bar
-   gets a solid backing so the page doesn't show through the logo */
+.chapters__short { display: none; }
+/* phones: four chapters that fit (the castle's three fold into one); the top bar gets a solid backing
+   so the page doesn't show through the logo */
 @media (max-width: 720px) {
-  .chapters { display: none; }
+  .chapters__inner, .chapters__long { display: none; }
+  .chapters__short { display: inline; }
+  .chapters ol { grid-template-columns: repeat(4, 1fr); overflow: visible; }
+  .chapters button { padding: 15px 4px; letter-spacing: .16em; }
+  .chapters button.in-castle { color: var(--bone2); }
   .topbar { padding-top: 10px; padding-bottom: 10px; background: rgba(3,4,3,.88); backdrop-filter: blur(10px); border-bottom: 1px solid var(--hair); }
-  .world .foot { padding-bottom: 40px; }
 }
 /* the castle starts pinned over the opener's last screen (already black from the dive), so there is no
    screen of plain black to scroll through between them */

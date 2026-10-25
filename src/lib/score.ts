@@ -108,7 +108,7 @@ export function unlockScore() {
   if (c.state === "suspended") c.resume().catch(() => {});
   if (!unlocked) {
     unlocked = true;
-    (["hit", "braam", "boom", "riser", "thunder", "rumble"] as Cue[]).forEach((n) => load(n));
+    (["hit", "braam", "boom", "thunder", "rumble"] as Cue[]).forEach((n) => load(n));
     startBed();
     startMusic();
     listeners.forEach((f) => f());

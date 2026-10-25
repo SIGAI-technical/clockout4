@@ -15,11 +15,11 @@ export const EVENT = {
 
   date: "30 October 2026",
   // When it starts, for the Doomsday clock (ISO with offset). Empty = clock hidden.
-  startsAt: "2026-10-30T11:00:00+05:30",
-  time: "11:00 a.m. – 6:00 p.m.",
+  startsAt: "2026-10-30T09:00:00+05:30",
+  time: "9:00 a.m. – 6:00 p.m.",
   venue: "4th Floor, AIML Department",
-  reporting: "11:00 a.m.",
-  deadline: "Wednesday, 28 October",
+  reporting: "9:00 a.m.",
+  deadline: "Thursday, 29 October",
   eligibility: "First-year and second-year students (FE and SE)",
 
   trials: [
@@ -28,10 +28,10 @@ export const EVENT = {
     { name: "The Multiversal Assembly", line: "Follow QR codes, solve cryptic riddles, and hunt down hidden Avengers across campus to claim victory.", teams: "12", duration: "75 minutes" },
   ] as Trial[],
 
-  prizePool: "₹50,000+",
+  prizePool: "₹60,000",
   prizes: [
-    { place: "1st Place", amount: "₹25,000" },
-    { place: "2nd Place", amount: "₹15,000" },
+    { place: "1st Place", amount: "₹30,000" },
+    { place: "2nd Place", amount: "₹20,000" },
     { place: "3rd Place", amount: "₹10,000" },
   ],
 
@@ -47,7 +47,7 @@ export const EVENT = {
 
   contacts: [
     { name: "Manan Darji", phone: "+91 89761 09195" },
-    { name: "Manas Shah", phone: "+91 93241 25911" },
+    { name: "Dhanish Ganatra", phone: "+91 91379 55956" },
   ],
 
   faq: [

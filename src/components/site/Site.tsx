@@ -71,15 +71,15 @@ export default function Site() {
               <p className="pool">{EVENT.prizePool}</p>
               <ul className="rows">{EVENT.prizes.map((p) => <li key={p.place}><span>{p.place}</span><span>{p.amount}</span></li>)}</ul>
               <p className="coda">Survive the takeover. Claim your glory.</p>
+              <dl className="facts facts--one facts--after">
+                <div><dt>Who can enter</dt><dd>{EVENT.eligibility}</dd></div>
+                <div><dt>Registration closes</dt><dd>{EVENT.deadline}</dd></div>
+              </dl>
             </div>
             <div id="terms" data-reveal>
               <h3 className="sub">Rules</h3>
               <ol className="rules">{EVENT.rules.map((r) => <li key={r.t}><span><strong>{r.t}:</strong> {r.d}</span></li>)}</ol>
               <p className="coda coda--rules">Doom sets the trials. Your actions decide your fate.</p>
-              <dl className="facts facts--one">
-                <div><dt>Who can enter</dt><dd>{EVENT.eligibility}</dd></div>
-                <div><dt>Registration closes</dt><dd>{EVENT.deadline}</dd></div>
-              </dl>
             </div>
           </div>
         </div>

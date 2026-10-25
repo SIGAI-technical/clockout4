@@ -17,7 +17,7 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://clockout.djscesigai.tech"),
   title: "Clockout 4.0 — The Doom Takeover",
-  description: "The multiverse has a new ruler. Three trials, ₹50,000+ in prizes. 30 October 2026, 4th Floor, AIML Department. By SIGAI.",
+  description: "The multiverse has a new ruler. Three trials, ₹60,000 in prizes. 30 October 2026, 4th Floor, AIML Department. By SIGAI.",
   openGraph: {
     title: "Clockout 4.0 — The Doom Takeover",
     description: "Doom has taken the AIML Department. Clockout 4.0 is his tournament.",
